@@ -7,10 +7,14 @@ from django.db import models
 class Tweeter(models.Model):
     id = models.UUIDField(primary_key=True, editable=False,
                           default=uuid.uuid4)
+    profile_name = models.CharField(max_length=50)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField("Tweet", related_name="liked_by", blank=True)
     following = models.ManyToManyField("self", symmetrical=False,
                                        related_name="followers", blank=True)
+
+    def likes_tweet(self, tweet_id):
+        return self.likes.filter(id=tweet_id).exists()
 
     def __str__(self):
         return f"@{self.user.username}"
@@ -27,6 +31,9 @@ class Tweet(models.Model):
                                       related_name="replies", null=True,
                                       blank=True, on_delete=models.SET_NULL)
     # if reply is true but replied is null then the tweet must've been deleted
+
+    class Meta:
+        ordering = ["-created"]
 
     def __str__(self):
         return f'"{self.text}" - @{self.author.user.username}'
