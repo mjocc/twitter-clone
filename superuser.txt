@@ -1,0 +1,3 @@
+username: admin
+email: admin@admin.net
+password: adminpassword
