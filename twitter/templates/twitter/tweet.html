@@ -6,7 +6,7 @@
 <div class="card m-4">
     <div class="card-header d-flex flex-column">
         <span class="fw-bold">{{tweet.author.profile_name}}</span>
-        <span class="text-muted">@{{tweet.author.user.username}}</span>
+        <a href="{% url 'profile' tweet.author.user.username %}" class="text-muted">@{{tweet.author.user.username}}</a>
     </div>
     <div class="card-body d-flex flex-column">
         <span class="fs-5">{{tweet.text}}</span>
@@ -17,7 +17,7 @@
             {% csrf_token %}
             <input type="hidden" name="tweet_id" value="{{tweet.id}}" />
             {% if not tweet_liked %}<input type="hidden" name="liked" value="on" />{% else %}<input type="hidden" name="liked" value="" />{% endif %}
-            <button class="btn btn-link p-0"><i class="fs-5 {{ tweet_liked|yesno:'bi-heart-fill text-danger,bi-heart text-primary' }}"></i></button>
+            <button style="all: unset; cursor: pointer;"><i class="fs-5 {{ tweet_liked|yesno:'bi-heart-fill text-danger,bi-heart text-primary' }}"></i></button>
         </form>
     </div>
 </div>
