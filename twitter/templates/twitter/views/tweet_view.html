@@ -1,0 +1,10 @@
+{% extends "twitter/base.html" %}
+
+{% block title %}{{tweet.author.profile_name}} on Twitter: "{{tweet.text}}"{% endblock %}
+
+{% block body %}
+    {% include "twitter/partials/tweet.html" %}
+    {% for reply in tweet.replies.all %}
+        {% include "twitter/partials/reply.html" with tweet=reply %}
+    {% endfor %}
+{% endblock %}

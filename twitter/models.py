@@ -9,7 +9,7 @@ class Tweeter(models.Model):
                           default=uuid.uuid4)
     profile_name = models.CharField(max_length=50)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    likes = models.ManyToManyField("Tweet", related_name="liked_by", blank=True)
+    likes = models.ManyToManyField("Tweet", related_name="likes", blank=True)
     following = models.ManyToManyField("self", symmetrical=False,
                                        related_name="followers", blank=True)
 
