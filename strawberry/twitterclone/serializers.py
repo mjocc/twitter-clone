@@ -1,17 +1,39 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Tweeter
+from .models import Tweet, Tweeter
 
 
-class TweeterSerializer(serializers.ModelSerializer):
+class TweeterSerializer(serializers.HyperlinkedModelSerializer):
+    def create(self, validated_data):
+        tweeter = Tweeter.objects.create_user(**validated_data)
+        return tweeter
+
     class Meta:
         model = Tweeter
-        fields = ["id", "profile_name", "likes", "following"]
+        fields = (
+            "url",
+            "username",
+            "profile_name",
+            "likes",
+            "following",
+            "followers",
+            "tweets",
+            "date_joined",
+            "email",
+            "password",
+        )
+        read_only_fields = ("url", "likes", "following", "followers", "tweets", "date_joined")
+        extra_kwargs = {"password": {"write_only": True}, "email": {"write_only": True}}
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    tweeter = TweeterSerializer()
+class TweetSerializer(serializers.HyperlinkedModelSerializer):
+    def create(self, validated_data):
+        tweet = Tweet(**validated_data)
+        tweet.reply = bool(validated_data["replied_tweet"])
+        tweet.author = self.context["request"].user
+        tweet.save()
+        return tweet
 
     class Meta:
-        model = User
-        fields = ["url", "username", "tweeter"]
+        model = Tweet
+        fields = ("url", "text", "created", "reply", "author", "replied_tweet")
+        read_only_fields = ("author", "reply")

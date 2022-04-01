@@ -1,6 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
 
 from .models import Tweet, Tweeter
 
@@ -14,15 +13,4 @@ class TweetAdmin(admin.ModelAdmin):
     )
 
 
-class TweeterInline(admin.StackedInline):
-    model = Tweeter
-    can_delete = False
-    verbose_name_plural = "tweeters"
-
-
-admin.site.unregister(User)
-
-
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    inlines = (TweeterInline,)
+admin.site.register(Tweeter, UserAdmin)

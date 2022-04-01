@@ -1,15 +1,31 @@
-from django import views
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets, permissions
-from .serializers import UserSerializer, TweeterSerializer
-from .models import Tweeter
+from rest_framework import permissions, viewsets, mixins
+
+from .models import Tweet, Tweeter
+from .serializers import TweeterSerializer, TweetSerializer
+from .permissions import IsAuthenticatedOrPost, ModifyIfAuthor
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class TweeterViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows tweeters to be viewed or edited.
     """
 
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    queryset = Tweeter.objects.all()
+    serializer_class = TweeterSerializer
+    permission_classes = [IsAuthenticatedOrPost]
+
+
+class TweetViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint that allows tweets to be viewed or edited.
+    """
+
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticated, ModifyIfAuthor]
