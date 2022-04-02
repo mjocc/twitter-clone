@@ -3360,3 +3360,8 @@ yauzl@^2.10.0:
   dependencies:
     buffer-crc32 "~0.2.3"
     fd-slicer "~1.1.0"
+
+zod@^3.14.3:
+  version "3.14.3"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.14.3.tgz#60e86341c05883c281fe96a0e79acea48a09f123"
+  integrity sha512-OzwRCSXB1+/8F6w6HkYHdbuWysYWnAF4fkRgKDcSFc54CE+Sv0rHXKfeNUReGCrHukm1LNpi6AYeXotznhYJbQ==
