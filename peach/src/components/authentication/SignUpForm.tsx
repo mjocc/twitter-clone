@@ -11,14 +11,17 @@ const schema = z.object({
   username: z
     .string()
     .min(3, { message: 'Username should have at least 3 characters' }),
-  profileName: z.string(),
-  emailAddress: z.string().email(),
-  password: z.string(),
+  profileName: z.string().min(1, { message: 'Password is required' }),
+  emailAddress: z
+    .string()
+    .email('Invalid email address')
+    .min(1, { message: 'Email is required' }),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
 export type SignUpFormValues = z.infer<typeof schema>;
 
 const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
-  const form = useForm({
+  const form = useForm<SignUpFormValues>({
     schema: zodResolver(schema),
     initialValues: {
       username: '',
@@ -30,7 +33,7 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
 
   return (
     <Box sx={{ maxWidth: 340 }} mx="auto">
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form onSubmit={form.onSubmit(onSubmit)} noValidate>
         <TextInput
           required
           label="Username"
