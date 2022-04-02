@@ -5,10 +5,7 @@ import { z } from 'zod';
 
 interface LogInFormProps {
   onSubmit: (
-    values: {
-      username: string;
-      password: string;
-    },
+    values: LogInFormValues,
     event: FormEvent<Element>
   ) => void;
 }
@@ -16,9 +13,10 @@ interface LogInFormProps {
 const schema = z.object({
   username: z
     .string()
-    .min(2, { message: 'Username should have at least 2 characters' }),
+    .min(3, { message: 'Username should have at least 3 characters' }),
   password: z.string(),
 });
+export type LogInFormValues = z.infer<typeof schema>;
 
 const LogInForm: VoidFunctionComponent<LogInFormProps> = ({ onSubmit }) => {
   const form = useForm({
