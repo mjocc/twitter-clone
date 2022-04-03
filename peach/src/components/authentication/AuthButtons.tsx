@@ -1,23 +1,33 @@
 import { Button, Group } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { VoidFunctionComponent } from 'react';
-import { authModalAtom } from '../../state';
-import AuthModal from './AuthModal';
+import { authFormAtom } from '../../state';
 
-interface AuthButtonsProps {}
+interface AuthButtonsProps {
+  grow?: boolean;
+  large?: boolean;
+}
 
-const AuthButtons: VoidFunctionComponent<AuthButtonsProps> = () => {
-  const [authModal, setAuthModal] = useAtom(authModalAtom);
+const AuthButtons: VoidFunctionComponent<AuthButtonsProps> = ({
+  grow,
+  large,
+}) => {
+  const [, setAuthForm] = useAtom(authFormAtom);
+  const size = large ? 'md' : 'sm';
+
   return (
-    <>
-      <Group>
-        <Button variant="outline" onClick={() => setAuthModal('log-in')}>
-          Log in
-        </Button>
-        <Button onClick={() => setAuthModal('sign-up')}>Sign up</Button>
-      </Group>
-      <AuthModal />
-    </>
+    <Group grow={!!grow}>
+      <Button
+        size={size}
+        variant="outline"
+        onClick={() => setAuthForm('log-in')}
+      >
+        Log in
+      </Button>
+      <Button size={size} onClick={() => setAuthForm('sign-up')}>
+        Sign up
+      </Button>
+    </Group>
   );
 };
 

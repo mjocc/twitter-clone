@@ -3,13 +3,14 @@ import {
   ColorScheme,
   ColorSchemeProvider,
   MantineProvider,
-  TypographyStylesProvider
 } from '@mantine/core';
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import Header from '../components/Header';
-import Navbar from '../components/Navbar';
+import Header from '../components/app-shell/Header';
+import Navbar from '../components/app-shell/Navbar';
+import AuthRouteGuard from '../components/authentication/AuthRouteGuard';
+import WelcomePage from '../components/other/WelcomePage';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -31,6 +32,7 @@ export default function App(props: AppProps) {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
+        <link rel="icon" type="image/png" href="/icon.png" />
       </Head>
 
       <ColorSchemeProvider
@@ -43,25 +45,26 @@ export default function App(props: AppProps) {
           theme={{
             /** Put your mantine theme override here */
             colorScheme,
+            loader: 'bars',
           }}
         >
-          <TypographyStylesProvider>
-            <AppShell
-              padding="md"
-              navbar={<Navbar />}
-              header={<Header />}
-              styles={(theme) => ({
-                main: {
-                  backgroundColor:
-                    theme.colorScheme === 'dark'
-                      ? theme.colors.dark[8]
-                      : theme.colors.gray[0],
-                },
-              })}
-            >
+          <AppShell
+            padding="md"
+            navbar={<Navbar />}
+            header={<Header />}
+            styles={(theme) => ({
+              main: {
+                backgroundColor:
+                  theme.colorScheme === 'dark'
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[0],
+              },
+            })}
+          >
+            <AuthRouteGuard backup={<WelcomePage />}>
               <Component {...pageProps} />
-            </AppShell>
-          </TypographyStylesProvider>
+            </AuthRouteGuard>
+          </AppShell>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

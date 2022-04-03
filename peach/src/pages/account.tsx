@@ -1,14 +1,14 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-const Home: NextPage = () => {
+const Account: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Home | Twitter</title>
+        <title>Manage account | Twitter</title>
       </Head>
     </>
   );
 };
 
-export default Home;
+export default Account;

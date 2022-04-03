@@ -1,5 +1,6 @@
 import { Box, Button, Group, PasswordInput, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useFocusTrap } from '@mantine/hooks';
 import { FormEvent, VoidFunctionComponent } from 'react';
 import { z } from 'zod';
 
@@ -16,27 +17,35 @@ const schema = z.object({
     .string()
     .email('Invalid email address')
     .min(1, { message: 'Email is required' }),
+  confirmEmailAddress: z
+    .string()
+    .email('Invalid email address')
+    .min(1, { message: 'Email is required' }),
   password: z.string().min(1, { message: 'Password is required' }),
 });
 export type SignUpFormValues = z.infer<typeof schema>;
 
 const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
+  const focusTrapRef = useFocusTrap();
+
   const form = useForm<SignUpFormValues>({
     schema: zodResolver(schema),
     initialValues: {
       username: '',
       profileName: '',
       emailAddress: '',
+      confirmEmailAddress: '',
       password: '',
     },
   });
 
   return (
-    <Box sx={{ maxWidth: 340 }} mx="auto">
+    <Box mx="auto" px={10} ref={focusTrapRef}>
       <form onSubmit={form.onSubmit(onSubmit)} noValidate>
         <TextInput
           required
           label="Username"
+          data-autofocus
           {...form.getInputProps('username')}
         />
         <TextInput
@@ -49,6 +58,12 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
           label="Email"
           type="email"
           {...form.getInputProps('emailAddress')}
+        />
+        <TextInput
+          required
+          label="Confirm email"
+          type="email"
+          {...form.getInputProps('confirmEmailAddress')}
         />
         <PasswordInput
           required

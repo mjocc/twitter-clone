@@ -7,15 +7,14 @@ interface DarkModeToggleProps {}
 const DarkModeToggle: VoidFunctionComponent<DarkModeToggleProps> = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
-
   return (
     <ActionIcon
-      variant="outline"
-      color={dark ? 'yellow' : 'blue'}
+      radius="md"
+      size="lg"
       onClick={() => toggleColorScheme()}
       title="Toggle color scheme"
     >
-      {dark ? <Sun size={18} /> : <MoonStars size={18} />}
+      {dark ? <Sun size={22} /> : <MoonStars size={22} />}
     </ActionIcon>
   );
 };
