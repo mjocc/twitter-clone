@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, ReactNode, FunctionComponent } from 'react';
-import { authenticatedAtom } from '../../state';
+import { authenticatedAtom } from '../../lib/state';
 
 interface AuthRouteGuardProps {
   backup: ReactNode; // rendered if auth checks fail

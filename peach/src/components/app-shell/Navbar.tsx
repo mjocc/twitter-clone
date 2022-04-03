@@ -2,7 +2,7 @@ import { Box, Navbar as MNavbar, Overlay } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { VoidFunctionComponent } from 'react';
 import { Adjustments, Home, User as UserIcon, Users } from 'tabler-icons-react';
-import { authenticatedAtom, usernameAtom } from '../../state';
+import { authenticatedAtom, usernameAtom } from '../../lib/state';
 import NavbarLink from './NavbarLink';
 import User from './User';
 

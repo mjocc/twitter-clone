@@ -1,12 +1,23 @@
-import { Box, Button, Group, PasswordInput, TextInput } from '@mantine/core';
+import {
+  Alert,
+  Box,
+  Button,
+  Group,
+  PasswordInput,
+  TextInput
+} from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
-import { FormEvent, VoidFunctionComponent } from 'react';
+import { showNotification } from '@mantine/notifications';
+import { useAtom } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
+import { FormEvent, useState, VoidFunctionComponent } from 'react';
+import { AlertCircle, InfoCircle } from 'tabler-icons-react';
 import { z } from 'zod';
+import { logIn } from '../../lib/auth';
+import { authFormAtom, authTokenAtom } from '../../lib/state';
 
-interface LogInFormProps {
-  onSubmit: (values: LogInFormValues, event: FormEvent<Element>) => void;
-}
+interface LogInFormProps {}
 
 const schema = z.object({
   username: z
@@ -16,8 +27,11 @@ const schema = z.object({
 });
 export type LogInFormValues = z.infer<typeof schema>;
 
-const LogInForm: VoidFunctionComponent<LogInFormProps> = ({ onSubmit }) => {
+const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
   const focusTrapRef = useFocusTrap();
+  const [, setAuthToken] = useAtom(authTokenAtom);
+  const [error, setError] = useState<null | string>(null);
+  const closeAuthForm = useResetAtom(authFormAtom);
 
   const form = useForm<LogInFormValues>({
     schema: zodResolver(schema),
@@ -27,9 +41,27 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = ({ onSubmit }) => {
     },
   });
 
+  const handleSubmit = async (
+    values: LogInFormValues,
+    event: FormEvent<Element>
+  ) => {
+    const response = await logIn(values);
+    console.log(response);
+    if (response?.token) {
+      setAuthToken(response.token);
+      closeAuthForm();
+      showNotification({ message: `Now logged in as '${values.username}'`, icon: <InfoCircle /> });
+      //TODO: request user information here in order to set it in jotai
+    } else if (response?.non_field_errors) {
+      setError(response.non_field_errors);
+    } else {
+      setError('Something went wrong. Please try again.');
+    }
+  };
+
   return (
     <Box mx="auto" px={10} ref={focusTrapRef}>
-      <form onSubmit={form.onSubmit(onSubmit)} noValidate>
+      <form onSubmit={form.onSubmit(handleSubmit)} noValidate>
         <TextInput
           required
           label="Username"
@@ -41,7 +73,12 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = ({ onSubmit }) => {
           label="Password"
           {...form.getInputProps('password')}
         />
-        <Group position="right" mt="xl">
+        {error && (
+          <Alert icon={<AlertCircle size={16} />} color="red" mt="md">
+            {error}
+          </Alert>
+        )}
+        <Group position="right" mt="md">
           <Button type="submit">Submit</Button>
         </Group>
       </form>

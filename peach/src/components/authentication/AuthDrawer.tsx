@@ -1,10 +1,10 @@
-import { Drawer, Modal, Tabs } from '@mantine/core';
+import { Drawer, Tabs } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { RESET } from 'jotai/utils';
 import { VoidFunctionComponent } from 'react';
-import { authFormAtom } from '../../state';
-import LogInForm, { LogInFormValues } from './LogInForm';
-import SignUpForm, { SignUpFormValues } from './SignUpForm';
+import { authFormAtom } from '../../lib/state';
+import LogInForm from './LogInForm';
+import SignUpForm from './SignUpForm';
 
 interface AuthDrawerProps {}
 
@@ -15,9 +15,6 @@ const AuthDrawer: VoidFunctionComponent<AuthDrawerProps> = () => {
     'sign-up': 1,
   };
   const active = authForm ? tabNums[authForm] : undefined;
-
-  const handleLogIn = (values: LogInFormValues) => console.log(values)
-  const handleSignUp = (values: SignUpFormValues) => console.log(values)
 
   return (
     <Drawer
@@ -34,10 +31,10 @@ const AuthDrawer: VoidFunctionComponent<AuthDrawerProps> = () => {
         grow
       >
         <Tabs.Tab label="Log in" tabKey="log-in">
-          <LogInForm onSubmit={handleLogIn} />
+          <LogInForm />
         </Tabs.Tab>
         <Tabs.Tab label="Sign up" tabKey="sign-up">
-          <SignUpForm onSubmit={handleSignUp} />
+          <SignUpForm />
         </Tabs.Tab>
       </Tabs>
     </Drawer>

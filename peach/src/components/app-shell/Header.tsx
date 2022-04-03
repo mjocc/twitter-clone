@@ -10,7 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { VoidFunctionComponent } from 'react';
 import icon from '../../../public/icon.png';
-import { authenticatedAtom } from '../../state';
+import { authenticatedAtom } from '../../lib/state';
 import AuthButtons from '../authentication/AuthButtons';
 import AuthDrawer from '../authentication/AuthDrawer';
 import DarkModeToggle from './DarkModeToggle';
@@ -27,7 +27,7 @@ const Header: VoidFunctionComponent<HeaderProps> = () => {
           <Link href="/" passHref>
             <UnstyledButton component="a">
               <Group>
-                <Image src={icon} height={32} width={32} />
+                <Image src={icon} height={32} width={32} alt="twitter logo" />
                 <Title order={3} m={0}>
                   Twitter
                 </Title>

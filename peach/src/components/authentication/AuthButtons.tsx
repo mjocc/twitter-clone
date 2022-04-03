@@ -1,7 +1,7 @@
 import { Button, Group } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { VoidFunctionComponent } from 'react';
-import { authFormAtom } from '../../state';
+import { authFormAtom } from '../../lib/state';
 
 interface AuthButtonsProps {
   grow?: boolean;

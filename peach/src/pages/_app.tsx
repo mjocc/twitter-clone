@@ -5,12 +5,16 @@ import {
   MantineProvider,
 } from '@mantine/core';
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
+import { NotificationsProvider } from '@mantine/notifications';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Header from '../components/app-shell/Header';
 import Navbar from '../components/app-shell/Navbar';
 import AuthRouteGuard from '../components/authentication/AuthRouteGuard';
 import WelcomePage from '../components/other/WelcomePage';
+//TODO: create two seperate gitignores, one for peach and one for strawberry
+const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -35,38 +39,42 @@ export default function App(props: AppProps) {
         <link rel="icon" type="image/png" href="/icon.png" />
       </Head>
 
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
-      >
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            /** Put your mantine theme override here */
-            colorScheme,
-            loader: 'bars',
-          }}
+      <QueryClientProvider client={queryClient}>
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
         >
-          <AppShell
-            padding="md"
-            navbar={<Navbar />}
-            header={<Header />}
-            styles={(theme) => ({
-              main: {
-                backgroundColor:
-                  theme.colorScheme === 'dark'
-                    ? theme.colors.dark[8]
-                    : theme.colors.gray[0],
-              },
-            })}
+          <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+              /** Put your mantine theme override here */
+              colorScheme,
+              loader: 'bars',
+            }}
           >
-            <AuthRouteGuard backup={<WelcomePage />}>
-              <Component {...pageProps} />
-            </AuthRouteGuard>
-          </AppShell>
-        </MantineProvider>
-      </ColorSchemeProvider>
+            <NotificationsProvider>
+              <AppShell
+                padding="md"
+                navbar={<Navbar />}
+                header={<Header />}
+                styles={(theme) => ({
+                  main: {
+                    backgroundColor:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.dark[8]
+                        : theme.colors.gray[0],
+                  },
+                })}
+              >
+                <AuthRouteGuard backup={<WelcomePage />}>
+                  <Component {...pageProps} />
+                </AuthRouteGuard>
+              </AppShell>
+            </NotificationsProvider>
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </QueryClientProvider>
     </>
   );
 }

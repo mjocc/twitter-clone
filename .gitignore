@@ -41,7 +41,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/ ignore for now because of issues with peach
 lib64/
 parts/
 sdist/

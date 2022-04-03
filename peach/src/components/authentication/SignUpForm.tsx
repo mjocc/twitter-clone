@@ -4,20 +4,14 @@ import { useFocusTrap } from '@mantine/hooks';
 import { FormEvent, VoidFunctionComponent } from 'react';
 import { z } from 'zod';
 
-interface SignUpFormProps {
-  onSubmit: (values: SignUpFormValues, event: FormEvent<Element>) => void;
-}
+interface SignUpFormProps {}
 
 const schema = z.object({
   username: z
     .string()
     .min(3, { message: 'Username should have at least 3 characters' }),
-  profileName: z.string().min(1, { message: 'Password is required' }),
+  profileName: z.string().min(1, { message: 'Profile name is required' }),
   emailAddress: z
-    .string()
-    .email('Invalid email address')
-    .min(1, { message: 'Email is required' }),
-  confirmEmailAddress: z
     .string()
     .email('Invalid email address')
     .min(1, { message: 'Email is required' }),
@@ -25,7 +19,7 @@ const schema = z.object({
 });
 export type SignUpFormValues = z.infer<typeof schema>;
 
-const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
+const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
   const focusTrapRef = useFocusTrap();
 
   const form = useForm<SignUpFormValues>({
@@ -34,14 +28,18 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
       username: '',
       profileName: '',
       emailAddress: '',
-      confirmEmailAddress: '',
       password: '',
     },
   });
+  // TODO: implement in similar way to LogInForm
+  const handleSubmit = (
+    values: SignUpFormValues,
+    event: FormEvent<Element>
+  ) => {};
 
   return (
     <Box mx="auto" px={10} ref={focusTrapRef}>
-      <form onSubmit={form.onSubmit(onSubmit)} noValidate>
+      <form onSubmit={form.onSubmit(handleSubmit)} noValidate>
         <TextInput
           required
           label="Username"
@@ -58,12 +56,6 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = ({ onSubmit }) => {
           label="Email"
           type="email"
           {...form.getInputProps('emailAddress')}
-        />
-        <TextInput
-          required
-          label="Confirm email"
-          type="email"
-          {...form.getInputProps('confirmEmailAddress')}
         />
         <PasswordInput
           required

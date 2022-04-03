@@ -10,7 +10,7 @@ import {
 import { useAtomValue } from 'jotai';
 import { VoidFunctionComponent } from 'react';
 import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
-import { authenticatedAtom } from '../../state';
+import { authenticatedAtom } from '../../lib/state';
 
 interface UserProps {}
 // TODO: Make this actually use user data and display a skeleton when the person is logged out.

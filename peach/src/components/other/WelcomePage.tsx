@@ -18,7 +18,7 @@ const WelcomePage: VoidFunctionComponent<WelcomePageProps> = () => {
         justify="center"
         sx={{ height: '100%', paddingBottom: 150 }}
       >
-        <Image src={icon} height={100} width={100} />
+        <Image src={icon} height={100} width={100} alt="twitter logo" />
         <Title
           order={1}
           align="center"
