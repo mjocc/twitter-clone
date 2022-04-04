@@ -4,7 +4,7 @@ import {
   Button,
   Group,
   PasswordInput,
-  TextInput
+  TextInput,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
@@ -14,7 +14,7 @@ import { useResetAtom } from 'jotai/utils';
 import { FormEvent, useState, VoidFunctionComponent } from 'react';
 import { AlertCircle, InfoCircle } from 'tabler-icons-react';
 import { z } from 'zod';
-import { logIn } from '../../lib/auth';
+import { getUserInfo, logIn } from '../../lib/auth';
 import { authFormAtom, authTokenAtom } from '../../lib/state';
 
 interface LogInFormProps {}
@@ -50,8 +50,14 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
     if (response?.token) {
       setAuthToken(response.token);
       closeAuthForm();
-      showNotification({ message: `Now logged in as '${values.username}'`, icon: <InfoCircle /> });
-      //TODO: request user information here in order to set it in jotai
+      showNotification({
+        message: `Now logged in as '${values.username}'`,
+        icon: <InfoCircle />,
+      });
+      const userInfoResponse = await getUserInfo(values.username);
+      const userInfo = userInfoResponse?.results?.[0];
+      console.log(userInfo);
+      //TODO: move this logic to a reusable hook or something and get rid of all console.logs
     } else if (response?.non_field_errors) {
       setError(response.non_field_errors);
     } else {

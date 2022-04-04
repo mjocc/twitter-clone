@@ -14,6 +14,7 @@ import Navbar from '../components/app-shell/Navbar';
 import AuthRouteGuard from '../components/authentication/AuthRouteGuard';
 import WelcomePage from '../components/other/WelcomePage';
 //TODO: create two seperate gitignores, one for peach and one for strawberry
+//! TODO: fix hydration errors
 const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {

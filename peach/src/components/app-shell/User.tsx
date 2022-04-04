@@ -5,18 +5,19 @@ import {
   Skeleton,
   Text,
   UnstyledButton,
-  useMantineTheme
+  useMantineTheme,
 } from '@mantine/core';
 import { useAtomValue } from 'jotai';
 import { VoidFunctionComponent } from 'react';
 import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
-import { authenticatedAtom } from '../../lib/state';
+import { authenticatedAtom, userInfoAtom } from '../../lib/state';
 
 interface UserProps {}
 // TODO: Make this actually use user data and display a skeleton when the person is logged out.
 const User: VoidFunctionComponent<UserProps> = () => {
   const theme = useMantineTheme();
   const authenticated = useAtomValue(authenticatedAtom);
+  const user = useAtomValue(userInfoAtom);
 
   return (
     <Box
@@ -46,7 +47,7 @@ const User: VoidFunctionComponent<UserProps> = () => {
           },
         }}
       >
-        {authenticated ? (
+        {authenticated && user ? (
           <Group>
             <Avatar
               src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
@@ -54,10 +55,10 @@ const User: VoidFunctionComponent<UserProps> = () => {
             />
             <Box sx={{ flex: 1 }}>
               <Text size="sm" weight={500}>
-                Amy Horsefighter
+                {user.profile_name}
               </Text>
               <Text color="dimmed" size="xs">
-                ahorsefighter@gmail.com
+                @{user.username}
               </Text>
             </Box>
 
@@ -79,14 +80,14 @@ const User: VoidFunctionComponent<UserProps> = () => {
               <Skeleton
                 visible={true}
                 animate={false}
-                width={120}
+                width={160}
                 height={12}
                 radius="xl"
               />
               <Skeleton
                 visible={true}
                 animate={false}
-                width={160}
+                width={120}
                 height={12}
                 mt={7}
                 radius="xl"

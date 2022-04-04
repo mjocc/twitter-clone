@@ -14,7 +14,7 @@ class TweeterViewSet(viewsets.ModelViewSet):
     queryset = Tweeter.objects.all()
     serializer_class = TweeterSerializer
     permission_classes = [ModifyIfUser]
-    filterset_fields = ("following__username", "followed_by__username")
+    filterset_fields = ("username", "following__username", "followed_by__username")
 
 
 class TweetViewSet(
