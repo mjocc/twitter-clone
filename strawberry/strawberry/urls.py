@@ -51,8 +51,8 @@ schema_urlpatterns = [
 ]
 
 urlpatterns = [
-    path("api/obtain-auth-token/", obtain_auth_token),
-    path("api/", include(router.urls)),
+    path("obtain-auth-token/", obtain_auth_token),
+    path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     *schema_urlpatterns,
     path("admin/", admin.site.urls),

@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://localhost:8000/api';
+export const API_BASE_URL = 'http://localhost:8000';
 export const apiUrl = (path: string) => API_BASE_URL + path;
 
 // TODO: make it so requests sent onced logged in are automatically authenticated (use fetch options)

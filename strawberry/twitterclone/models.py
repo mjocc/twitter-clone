@@ -11,14 +11,15 @@ from rest_framework.authtoken.models import Token
 class Tweeter(AbstractUser):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     profile_name = models.CharField(max_length=50)
-    likes = models.ManyToManyField("Tweet", related_name="likes", blank=True)
+    likes = models.ManyToManyField("Tweet", related_name="liked_by", blank=True)
     following = models.ManyToManyField(
-        "self", symmetrical=False, related_name="followers", blank=True
+        "self", symmetrical=False, related_name="followed_by", blank=True
     )
 
     class Meta:
         verbose_name = "tweeter"
         verbose_name_plural = "tweeters"
+        ordering=["profile_name"]
 
     def likes_tweet(self, tweet_id):
         return self.likes.filter(id=tweet_id).exists()

@@ -1,25 +1,25 @@
-from rest_framework.permissions import BasePermission
-
-SAFE_METHODS = ("GET", "OPTIONS", "HEAD")
+from rest_framework import permissions
 
 
-class IsAuthenticatedOrPost(BasePermission):
+class DeleteIfAuthor(permissions.BasePermission):
     """
-    If the user is unauthenticated, they can only access the POST method.
-    """
-
-    def has_permission(self, request, view):
-        return (
-            request.method == "POST" or request.user and request.user.is_authenticated
-        )
-
-
-class ModifyIfAuthor(BasePermission):
-    """
-    Allows modification of objects only if the user is the author of the object.
+    Allows deletion of objects only if the user is the 'author' of the object.
     """
 
     def has_object_permission(self, request, view, obj):
-        return (
-            request.method in SAFE_METHODS or request.user and request.user == obj.author
-        )
+        if request.method != "DELETE":
+            return True
+
+        return obj.author == request.user
+
+
+class ModifyIfUser(permissions.BasePermission):
+    """
+    Allows modification of user account only if the user is the owner of that account.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj == request.user
