@@ -16,7 +16,7 @@ const WelcomePage: VoidFunctionComponent<WelcomePageProps> = () => {
       <Stack
         align="center"
         justify="center"
-        sx={{ height: '100%', paddingBottom: 150 }}
+        sx={{ height: '100%', paddingBottom: '15vh' }}
       >
         <Image src={icon} height={100} width={100} alt="twitter logo" />
         <Title

@@ -145,3 +145,6 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#substituting-a-custom-user-model
 
 AUTH_USER_MODEL = "twitterclone.Tweeter"
+
+# Append slash
+APPEND_SLASH = False

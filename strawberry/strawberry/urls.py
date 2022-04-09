@@ -21,7 +21,7 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from twitterclone import views
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"tweeters", views.TweeterViewSet)
 router.register(r"tweets", views.TweetViewSet)
 
@@ -51,10 +51,10 @@ schema_urlpatterns = [
 ]
 
 urlpatterns = [
-    path("obtain-auth-token/", obtain_auth_token),
+    path("obtain-auth-token", views.CustomAuthToken.as_view()),
     path("", include(router.urls)),
-    path("like-tweet/<uuid:tweet_id>/", views.like_tweet_view),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("like-tweet/<uuid:tweet_id>", views.like_tweet_view),
+    path("api-auth", include("rest_framework.urls", namespace="rest_framework")),
     *schema_urlpatterns,
-    path("admin/", admin.site.urls),
+    path("admin", admin.site.urls),
 ]

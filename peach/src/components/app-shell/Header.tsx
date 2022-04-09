@@ -19,7 +19,6 @@ import SearchBar from './SearchBar';
 interface HeaderProps {}
 
 const Header: VoidFunctionComponent<HeaderProps> = () => {
-  const authenticated = useAtomValue(authenticatedAtom);
   return (
     <>
       <MantineHeader height={60} p="xs">
@@ -36,7 +35,7 @@ const Header: VoidFunctionComponent<HeaderProps> = () => {
           </Link>
           <Group spacing={30} ml={'auto'}>
             <SearchBar />
-            {!authenticated && <AuthButtons />}
+            <AuthButtons />
             <DarkModeToggle />
           </Group>
         </Group>

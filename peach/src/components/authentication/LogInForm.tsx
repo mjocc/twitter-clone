@@ -4,7 +4,7 @@ import {
   Button,
   Group,
   PasswordInput,
-  TextInput,
+  TextInput
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
@@ -14,11 +14,11 @@ import { useResetAtom } from 'jotai/utils';
 import { FormEvent, useState, VoidFunctionComponent } from 'react';
 import { AlertCircle, InfoCircle } from 'tabler-icons-react';
 import { z } from 'zod';
-import { getUserInfo, logIn } from '../../lib/auth';
-import { authFormAtom, authTokenAtom } from '../../lib/state';
+import { logIn } from '../../lib/auth';
+import { authFormAtom, userInfoAtom } from '../../lib/state';
 
 interface LogInFormProps {}
-
+// TODO: most of this is reusable between auth forms - combine into one generic component?
 const schema = z.object({
   username: z
     .string()
@@ -29,9 +29,9 @@ export type LogInFormValues = z.infer<typeof schema>;
 
 const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
   const focusTrapRef = useFocusTrap();
-  const [, setAuthToken] = useAtom(authTokenAtom);
   const [error, setError] = useState<null | string>(null);
   const closeAuthForm = useResetAtom(authFormAtom);
+  const [, setUserInfo] = useAtom(userInfoAtom);
 
   const form = useForm<LogInFormValues>({
     schema: zodResolver(schema),
@@ -45,21 +45,18 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
     values: LogInFormValues,
     event: FormEvent<Element>
   ) => {
-    const response = await logIn(values);
-    console.log(response);
-    if (response?.token) {
-      setAuthToken(response.token);
+    const { responseData } = await logIn(values);
+    if (responseData?.loggedIn) {
+      setUserInfo(responseData);
       closeAuthForm();
       showNotification({
         message: `Now logged in as '${values.username}'`,
         icon: <InfoCircle />,
       });
-      const userInfoResponse = await getUserInfo(values.username);
-      const userInfo = userInfoResponse?.results?.[0];
-      console.log(userInfo);
-      //TODO: move this logic to a reusable hook or something and get rid of all console.logs
-    } else if (response?.non_field_errors) {
-      setError(response.non_field_errors);
+      console.log(responseData)
+      //TODO: move this logic to a reusable hook or something?
+    } else if (responseData?.non_field_errors) {
+      setError(responseData.non_field_errors);
     } else {
       setError('Something went wrong. Please try again.');
     }
