@@ -30,15 +30,26 @@ class TweeterSerializer(serializers.ModelSerializer):
 
 class TweetSerializer(serializers.ModelSerializer):
     author = TweeterSerializer(read_only=True)
+    liked = serializers.SerializerMethodField()
+
+    def get_liked(self, instance):
+        if user := get_user_or_none(self.context):
+            return user.likes_tweet(instance)
 
     class Meta:
         model = Tweet
-        fields = ("id", "text", "created", "reply", "author", "replied_tweet")
+        fields = ("id", "text", "created", "reply", "author", "replied_tweet", "liked")
         read_only_fields = ("author", "reply")
 
     def create(self, validated_data):
         tweet = Tweet(**validated_data)
         tweet.reply = bool(validated_data["replied_tweet"])
-        tweet.author = self.context["request"].user
+        tweet.author = get_user_or_none(self.context)
         tweet.save()
         return tweet
+
+
+def get_user_or_none(context):
+    if hasattr((request := context.get("request")), "user"):
+        user = request.user
+        return user if not user.is_anonymous else None

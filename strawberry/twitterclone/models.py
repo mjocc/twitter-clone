@@ -19,9 +19,17 @@ class Tweeter(AbstractUser):
     class Meta:
         verbose_name = "tweeter"
         verbose_name_plural = "tweeters"
-        ordering=["profile_name"]
+        ordering = ["profile_name"]
 
-    def likes_tweet(self, tweet_id):
+    def likes_tweet(self, tweet):
+        if isinstance(tweet, Tweet):
+            tweet_id = tweet.id
+        elif isinstance(tweet, (str, uuid.UUID)):
+            tweet_id = tweet
+        else:
+            raise ValueError(
+                "Must provide a Tweet object or tweet id (UUID or str) to check against."
+            )
         return self.likes.filter(id=tweet_id).exists()
 
     def __str__(self):
