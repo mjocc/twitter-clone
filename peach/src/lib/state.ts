@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithHash, selectAtom } from 'jotai/utils';
-import { UserInfo } from '../lib/auth';
+import { UserInfo } from './api/auth';
 
 // TODO: (add profile pic url option to database?)
 export const userInfoAtom = atom<null | UserInfo>(null);

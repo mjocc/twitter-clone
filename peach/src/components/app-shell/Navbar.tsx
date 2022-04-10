@@ -7,7 +7,7 @@ import NavbarLink from './NavbarLink';
 import User from './User';
 
 interface NavbarProps {}
-
+//TODO: make the currently active page show up differently
 const Navbar: VoidFunctionComponent<NavbarProps> = () => {
   const username = useAtomValue(usernameAtom);
   const authenticated = useAtomValue(authenticatedAtom);

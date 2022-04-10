@@ -1,4 +1,4 @@
-import { makeApiCall } from './api';
+import { makeApiCall } from '.';
 
 export interface UserInfo {
   token?: null;

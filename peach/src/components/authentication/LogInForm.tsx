@@ -14,7 +14,7 @@ import { useResetAtom } from 'jotai/utils';
 import { FormEvent, useState, VoidFunctionComponent } from 'react';
 import { AlertCircle, InfoCircle } from 'tabler-icons-react';
 import { z } from 'zod';
-import { logIn } from '../../lib/auth';
+import { logIn } from '../../lib/api/auth';
 import { authFormAtom, userInfoAtom } from '../../lib/state';
 
 interface LogInFormProps {}

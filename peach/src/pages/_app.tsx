@@ -12,14 +12,23 @@ import { useHydrateAtoms } from 'jotai/utils';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import Header from '../components/app-shell/Header';
 import Navbar from '../components/app-shell/Navbar';
 import AuthRouteGuard from '../components/authentication/AuthRouteGuard';
 import WelcomePage from '../components/other/WelcomePage';
-import { UserInfo } from '../lib/auth';
+import { UserInfo } from '../lib/api/auth';
+import { fetchFromApi } from '../lib/api/query';
 import { userInfoAtom } from '../lib/state';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      //@ts-ignore
+      queryFn: fetchFromApi,
+    },
+  },
+});
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -49,6 +58,7 @@ export default function App(props: AppProps) {
       </Head>
 
       <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         <ColorSchemeProvider
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
