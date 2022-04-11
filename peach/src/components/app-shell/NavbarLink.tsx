@@ -1,5 +1,6 @@
 import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { VoidFunctionComponent } from 'react';
 
 interface NavbarLinkProps {
@@ -15,6 +16,8 @@ const NavbarLink: VoidFunctionComponent<NavbarLinkProps> = ({
   label,
   href,
 }) => {
+  const router = useRouter();
+  
   return (
     <Link href={href} passHref>
       <UnstyledButton
@@ -33,6 +36,14 @@ const NavbarLink: VoidFunctionComponent<NavbarLinkProps> = ({
                 ? theme.colors.dark[6]
                 : theme.colors.gray[0],
           },
+          ...(router.asPath === href
+            ? {
+                backgroundColor:
+                  theme.colorScheme === 'dark'
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[2],
+              }
+            : {}),
         })}
       >
         <Group>

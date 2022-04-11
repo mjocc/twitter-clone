@@ -1,8 +1,7 @@
 import {
-  AppShell,
-  ColorScheme,
+  AppShell, ColorScheme,
   ColorSchemeProvider,
-  MantineProvider,
+  MantineProvider
 } from '@mantine/core';
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
@@ -58,7 +57,7 @@ export default function App(props: AppProps) {
       </Head>
 
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+        <ReactQueryDevtools initialIsOpen={false} position="top-left" />
         <ColorSchemeProvider
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
@@ -103,8 +102,8 @@ export default function App(props: AppProps) {
 type UserInfoCookie = Omit<UserInfo, 'loggedIn' | 'token'> & { token: string };
 
 App.getInitialProps = async (context: any) => {
-  const userInfoCookie: UserInfoCookie | undefined = JSON.parse(
-    context?.ctx?.req?.cookies?.['auth-token']
+  const userInfoCookie: UserInfoCookie | null = JSON.parse(
+    context?.ctx?.req?.cookies?.['auth-token'] ?? null
   );
   if (userInfoCookie) {
     const userInfo: UserInfo = {

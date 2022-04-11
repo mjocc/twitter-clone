@@ -31,14 +31,32 @@ class TweeterSerializer(serializers.ModelSerializer):
 class TweetSerializer(serializers.ModelSerializer):
     author = TweeterSerializer(read_only=True)
     liked = serializers.SerializerMethodField()
+    like_count = serializers.SerializerMethodField()
+    reply_count = serializers.SerializerMethodField()
 
     def get_liked(self, instance):
         if user := get_user_or_none(self.context):
             return user.likes_tweet(instance)
 
+    def get_like_count(self, instance):
+        return instance.liked_by.count()
+
+    def get_reply_count(self, instance):
+        return instance.replies.count()
+
     class Meta:
         model = Tweet
-        fields = ("id", "text", "created", "reply", "author", "replied_tweet", "liked")
+        fields = (
+            "id",
+            "text",
+            "created",
+            "reply",
+            "author",
+            "replied_tweet",
+            "liked",
+            "like_count",
+            "reply_count",
+        )
         read_only_fields = ("author", "reply")
 
     def create(self, validated_data):

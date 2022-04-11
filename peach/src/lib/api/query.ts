@@ -1,3 +1,4 @@
+import { QueryFunctionContext } from 'react-query';
 import { makeApiCall } from '.';
 
 export type QueryKeyObject<T extends {}> = {
@@ -16,12 +17,17 @@ export type Tweet = {
   created: string;
   reply: boolean;
   author: TweetAuthor;
+  replied_tweet: string | null;
+  liked: boolean | null;
+  like_count: number;
+  reply_count: number;
 };
 
 export type GeneralQueryKey = [string, { [key: string]: string | undefined }];
 export const fetchFromApi = async ({
   queryKey,
-}: QueryKeyObject<GeneralQueryKey>) => {
+  pageParam = 1,
+}: QueryFunctionContext<GeneralQueryKey, number | string>) => {
   const [path, params] = queryKey;
 
   Object.keys(params).forEach((key) => {
@@ -34,7 +40,7 @@ export const fetchFromApi = async ({
   return await makeApiCall({
     method: 'GET',
     path,
-    params: cleanedParams,
+    params: { ...cleanedParams, page: pageParam.toString() },
     errorOnFail: true,
   });
 };

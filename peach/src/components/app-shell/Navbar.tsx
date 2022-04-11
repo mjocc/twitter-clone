@@ -4,10 +4,10 @@ import { VoidFunctionComponent } from 'react';
 import { Adjustments, Home, User as UserIcon, Users } from 'tabler-icons-react';
 import { authenticatedAtom, usernameAtom } from '../../lib/state';
 import NavbarLink from './NavbarLink';
-import User from './User';
+import NavbarUser from './NavbarUser';
 
 interface NavbarProps {}
-//TODO: make the currently active page show up differently
+
 const Navbar: VoidFunctionComponent<NavbarProps> = () => {
   const username = useAtomValue(usernameAtom);
   const authenticated = useAtomValue(authenticatedAtom);
@@ -43,7 +43,7 @@ const Navbar: VoidFunctionComponent<NavbarProps> = () => {
           />
         </MNavbar.Section>
         <MNavbar.Section>
-          <User />
+          <NavbarUser />
         </MNavbar.Section>
       </MNavbar>
     </Box>
