@@ -1,7 +1,10 @@
 import {
-  AppShell, ColorScheme,
+  AppShell,
+  ColorScheme,
   ColorSchemeProvider,
-  MantineProvider
+  Container,
+  Global,
+  MantineProvider,
 } from '@mantine/core';
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
@@ -71,6 +74,16 @@ export default function App(props: AppProps) {
               loader: 'bars',
             }}
           >
+            <Global
+              styles={(theme) => ({
+                body: {
+                  backgroundColor:
+                    theme.colorScheme === 'dark'
+                      ? theme.colors.dark[8]
+                      : theme.colors.gray[0],
+                },
+              })}
+            />
             <NotificationsProvider>
               <ModalsProvider>
                 <AppShell
@@ -79,16 +92,16 @@ export default function App(props: AppProps) {
                   header={<Header />}
                   styles={(theme) => ({
                     main: {
-                      backgroundColor:
-                        theme.colorScheme === 'dark'
-                          ? theme.colors.dark[8]
-                          : theme.colors.gray[0],
+                      marginTop: 60,
+                      marginLeft: 300,
                     },
                   })}
                 >
-                  <AuthRouteGuard backup={<WelcomePage />}>
-                    <Component {...pageProps} />
-                  </AuthRouteGuard>
+                  <Container>
+                    <AuthRouteGuard backup={<WelcomePage />}>
+                      <Component {...pageProps} />
+                    </AuthRouteGuard>
+                  </Container>
                 </AppShell>
               </ModalsProvider>
             </NotificationsProvider>

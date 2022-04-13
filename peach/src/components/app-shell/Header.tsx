@@ -1,5 +1,6 @@
 import {
   Anchor,
+  Container,
   Group,
   Header as MantineHeader,
   Title,
@@ -21,24 +22,32 @@ interface HeaderProps {}
 const Header: VoidFunctionComponent<HeaderProps> = () => {
   return (
     <>
-      <MantineHeader height={60} p="xs">
-        <Group sx={{ height: '100%' }} px={20} position="apart">
-          <Link href="/" passHref>
-            <UnstyledButton component="a">
-              <Group>
-                <Image src={icon} height={32} width={32} alt="twitter logo" />
-                <Title order={3} m={0}>
-                  Twitter
-                </Title>
-              </Group>
-            </UnstyledButton>
-          </Link>
-          <Group spacing={30} ml={'auto'}>
-            <SearchBar />
-            <AuthButtons />
-            <DarkModeToggle />
+      <MantineHeader
+        height={60}
+        p="xs"
+        fixed
+        position={{ top: 0, left: 0 }}
+        sx={{ width: '100vw' }}
+      >
+        <Container fluid>
+          <Group px={20} position="apart">
+            <Link href="/" passHref>
+              <UnstyledButton component="a">
+                <Group>
+                  <Image src={icon} height={32} width={32} alt="twitter logo" />
+                  <Title order={3} m={0}>
+                    Twitter
+                  </Title>
+                </Group>
+              </UnstyledButton>
+            </Link>
+            <Group spacing={30} ml={'auto'}>
+              <SearchBar />
+              <AuthButtons />
+              <DarkModeToggle />
+            </Group>
           </Group>
-        </Group>
+        </Container>
       </MantineHeader>
       <AuthDrawer />
     </>

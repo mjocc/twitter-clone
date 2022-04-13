@@ -15,7 +15,12 @@ const Navbar: VoidFunctionComponent<NavbarProps> = () => {
   return (
     <Box sx={{ position: 'relative' }}>
       {!authenticated && <Overlay opacity={0.5} color="#000000" zIndex={5} />}
-      <MNavbar width={{ base: 300 }} p="xs">
+      <MNavbar
+        width={{ base: 300 }}
+        p="xs"
+        fixed
+        position={{ top: 0, left: 0 }}
+      >
         <MNavbar.Section grow mt="xs">
           <NavbarLink
             icon={<Home size={16} />}

@@ -17,7 +17,7 @@ const NavbarLink: VoidFunctionComponent<NavbarLinkProps> = ({
   href,
 }) => {
   const router = useRouter();
-  
+
   return (
     <Link href={href} passHref>
       <UnstyledButton
@@ -36,7 +36,7 @@ const NavbarLink: VoidFunctionComponent<NavbarLinkProps> = ({
                 ? theme.colors.dark[6]
                 : theme.colors.gray[0],
           },
-          ...(router.asPath === href
+          ...(router.asPath.replace(/#.*$/, '') === href
             ? {
                 backgroundColor:
                   theme.colorScheme === 'dark'

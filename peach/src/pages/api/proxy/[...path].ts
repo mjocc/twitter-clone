@@ -2,7 +2,6 @@ import Cookies from 'cookies';
 import { IncomingMessage } from 'http';
 import httpProxy, { ProxyResCallback } from 'http-proxy';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
-import { makeApiCall } from '../../../lib/api';
 
 const API_URL = process.env.API_BASE_URL;
 const proxy = httpProxy.createProxyServer();
@@ -30,7 +29,6 @@ const handler: NextApiHandler = (req, res) => {
           const responseData = JSON.parse(apiResponseBody);
           if (responseData?.token) {
             const cookies = new Cookies(req, res);
-            //TODO: swap to JWT? check django rest framework and what JWTs are better at
             cookies.set('auth-token', JSON.stringify(responseData), {
               httpOnly: true,
               sameSite: 'lax',
