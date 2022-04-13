@@ -18,7 +18,7 @@ const Error404Page: NextPage<Error404PageProps> = () => {
       <Stack
         align="center"
         justify="center"
-        sx={{ height: '100%', paddingBottom: 150 }}
+        sx={{ marginTop: '15vh' }}
       >
         <Title
           order={1}

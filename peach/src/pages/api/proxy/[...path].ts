@@ -2,7 +2,6 @@ import Cookies from 'cookies';
 import { IncomingMessage } from 'http';
 import httpProxy, { ProxyResCallback } from 'http-proxy';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
-import { makeApiCall } from '../../../lib/api';
 
 const API_URL = process.env.API_BASE_URL;
 const proxy = httpProxy.createProxyServer();

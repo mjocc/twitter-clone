@@ -4,7 +4,7 @@ import {
   Button,
   Group,
   PasswordInput,
-  TextInput
+  TextInput,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
@@ -53,7 +53,6 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
         message: `Now logged in as '${values.username}'`,
         icon: <InfoCircle />,
       });
-      console.log(responseData)
       //TODO: move this logic to a reusable hook or something?
     } else if (responseData?.non_field_errors) {
       setError(responseData.non_field_errors);
@@ -83,6 +82,7 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
         )}
         <Group position="right" mt="md">
           <Button type="submit">Submit</Button>
+          {/* // TODO: add loading spinner while processing */}
         </Group>
       </form>
     </Box>

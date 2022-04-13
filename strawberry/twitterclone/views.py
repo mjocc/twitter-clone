@@ -34,7 +34,13 @@ class TweetViewSet(
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
     permission_classes = [DeleteIfAuthor, IsAuthenticatedOrReadOnly]
-    filterset_fields = ("replied_tweet", "author__username", "author__followed_by__username", "liked_by__username")
+    filterset_fields = (
+        "replied_tweet",
+        "author__username",
+        "author__followed_by__username",
+        "liked_by__username",
+        "reply",
+    )
 
 
 @decorators.api_view(["PATCH"])
