@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Center, Loader, Stack } from '@mantine/core';
+import { Alert, Box, Center, Loader, Stack } from '@mantine/core';
 import { useIntersection } from '@mantine/hooks';
 import { useEffect, VoidFunctionComponent } from 'react';
 import { useInfiniteQuery } from 'react-query';
@@ -28,7 +28,7 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
     ['/tweets', queryParams],
     {
       getNextPageParam: (lastPage) =>
-        lastPage.next
+        lastPage?.next
           ? new URL(lastPage.next).searchParams.get('page')
           : undefined,
       initialData: {
@@ -58,7 +58,9 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
       {isSuccess && (
         <>
           {data.pages.map((page) =>
-            page.results.map((tweet) => <Tweet key={tweet.id} tweet={tweet} />)
+            page?.results?.map((tweet) => (
+              <Tweet key={tweet.id} tweet={tweet} />
+            ))
           )}
           {hasNextPage && !isFetchingNextPage && <Box ref={ref}></Box>}
         </>

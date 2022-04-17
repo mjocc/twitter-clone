@@ -17,4 +17,10 @@ export const logIn = async (credentials: {
     body: credentials,
   });
 
-// TODO: write similar logic for sign up and log out
+export const logOut = async () =>
+  await makeApiCall({
+    exactPath: '/api/log-out',
+    method: 'POST',
+  });
+
+// TODO: write similar logic for sign up

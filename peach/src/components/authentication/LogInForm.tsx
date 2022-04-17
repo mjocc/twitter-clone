@@ -45,8 +45,8 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
     values: LogInFormValues,
     event: FormEvent<Element>
   ) => {
-    const { responseData } = await logIn(values);
-    if (responseData?.loggedIn) {
+    const { response, responseData } = await logIn(values);
+    if (response.ok && responseData?.loggedIn) {
       setUserInfo(responseData);
       closeAuthForm();
       showNotification({
@@ -81,7 +81,7 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
           </Alert>
         )}
         <Group position="right" mt="md">
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Log in</Button>
           {/* // TODO: add loading spinner while processing */}
         </Group>
       </form>

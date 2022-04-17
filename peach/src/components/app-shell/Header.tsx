@@ -1,17 +1,14 @@
 import {
-  Anchor,
   Container,
   Group,
   Header as MantineHeader,
   Title,
-  UnstyledButton,
+  UnstyledButton
 } from '@mantine/core';
-import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import Link from 'next/link';
 import { VoidFunctionComponent } from 'react';
 import icon from '../../../public/icon.png';
-import { authenticatedAtom } from '../../lib/state';
 import AuthButtons from '../authentication/AuthButtons';
 import AuthDrawer from '../authentication/AuthDrawer';
 import DarkModeToggle from './DarkModeToggle';

@@ -32,6 +32,7 @@ const handler: NextApiHandler = (req, res) => {
             cookies.set('auth-token', JSON.stringify(responseData), {
               httpOnly: true,
               sameSite: 'lax',
+              maxAge: 2592000000, // 30 days
             });
             delete responseData.token;
             res.status(200).json({ ...responseData, loggedIn: true });

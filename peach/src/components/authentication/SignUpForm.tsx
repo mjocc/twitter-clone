@@ -63,7 +63,7 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
           {...form.getInputProps('password')}
         />
         <Group position="right" mt="xl">
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Sign up</Button>
         </Group>
       </form>
     </Box>

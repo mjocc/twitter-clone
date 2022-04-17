@@ -8,9 +8,11 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useModals } from '@mantine/modals';
-import { useAtomValue } from 'jotai';
+import { showNotification } from '@mantine/notifications';
+import { useAtom, useAtomValue } from 'jotai';
 import { VoidFunctionComponent } from 'react';
-import { UserOff } from 'tabler-icons-react';
+import { InfoCircle, UserOff } from 'tabler-icons-react';
+import { logOut } from '../../lib/api/auth';
 import { authenticatedAtom, userInfoAtom } from '../../lib/state';
 import User from '../tweets/User';
 
@@ -19,7 +21,7 @@ interface NavbarUserProps {}
 const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
   const theme = useMantineTheme();
   const authenticated = useAtomValue(authenticatedAtom);
-  const user = useAtomValue(userInfoAtom);
+  const [user, setUserInfo] = useAtom(userInfoAtom);
   const modals = useModals();
 
   const openLogOutConfirmationModal = () =>
@@ -29,8 +31,17 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
       children: <Text size="sm">Are you sure you want to log out?</Text>,
       labels: { confirm: 'Log out', cancel: 'Go back' },
       confirmProps: { color: 'blue' },
-      //TODO: implement an actual log out thing here
-      onConfirm: () => console.log('log out'),
+      withCloseButton: false,
+      onConfirm: async () => {
+        const { response, responseData } = await logOut();
+        if (response.ok && responseData?.loggedIn === false) {
+          setUserInfo(null);
+          showNotification({
+            message: 'Logged out successfully',
+            icon: <InfoCircle />,
+          });
+        }
+      },
     });
 
   return (

@@ -8,14 +8,15 @@ export type HttpMethod =
   | 'OPTIONS';
 export type QueryParams = { [key: string]: string };
 
-interface MakeApiCallInfo extends Omit<RequestInit, 'body'> {
-  path: string;
-  pathAsIs?: boolean;
+interface MakeApiCallInfoBase extends Omit<RequestInit, 'body'> {
   method: HttpMethod;
   params?: QueryParams;
-  body?: { [key: string]: any };
+  body?: { [key: string]: string };
   errorOnFail?: boolean;
 }
+type MakeApiCallInfo =
+  | (MakeApiCallInfoBase & { path: string; exactPath?: never })
+  | (MakeApiCallInfoBase & { path?: never; exactPath: string });
 
 export type ApiResponse<T extends {}> = {
   count: number;
@@ -25,7 +26,10 @@ export type ApiResponse<T extends {}> = {
 };
 
 const apiUrl = (path: string, queryParams: QueryParams = {}) =>
-  '/api/proxy' + path + '?' + new URLSearchParams(queryParams);
+  (typeof window === 'undefined' ? process.env.API_BASE_URL : '/api/proxy') +
+  path +
+  '?' +
+  new URLSearchParams(queryParams);
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -34,19 +38,23 @@ const defaultHeaders = {
 
 export const makeApiCall = async ({
   path,
-  pathAsIs = false,
+  exactPath,
   params = {},
   headers: extraHeaders = {},
   body: bodyObject,
   errorOnFail = false,
   ...otherOptions
 }: MakeApiCallInfo) => {
-  const url = pathAsIs ? path : apiUrl(path, params);
+  const url = path ? apiUrl(path, params) : (exactPath as string);
+  if (path) {
+  } else {
+    exactPath;
+  }
   const headers = { ...defaultHeaders, ...extraHeaders };
   const body = bodyObject ? JSON.stringify(bodyObject) : undefined;
 
   const response = await fetch(url, { headers, body, ...otherOptions });
   if (errorOnFail && !response.ok) throw new Error('Error in response');
   const responseData = await response.json();
-  return errorOnFail ? responseData : { response, responseData };
+  return { response, responseData };
 };

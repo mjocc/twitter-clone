@@ -1,5 +1,9 @@
+import { GetServerSidePropsContext, PreviewData } from 'next';
+import path from 'path';
+import { ParsedUrlQuery } from 'querystring';
 import { QueryFunctionContext } from 'react-query';
 import { makeApiCall } from '.';
+import { UserInfoCookie } from '../../pages/_app';
 
 export type QueryKeyObject<T extends {}> = {
   queryKey: T;
@@ -24,25 +28,50 @@ export type Tweet = {
 };
 
 export type GeneralQueryKey = [string, { [key: string]: string | undefined }];
-export const fetchFromApi = async ({
-  queryKey,
-  pageParam = 1,
-}: QueryFunctionContext<GeneralQueryKey, number | string>) => {
-  const [path, params] = queryKey;
 
+const cleanParams = (params: GeneralQueryKey[1]) => {
   Object.keys(params).forEach((key) => {
     if (params[key] === undefined) {
       delete params[key];
     }
   });
   const cleanedParams = params as { [key: string]: string };
+  return cleanedParams;
+};
 
-  return await makeApiCall({
+export const fetchForQuery = async ({
+  queryKey,
+  pageParam = 1,
+}: QueryFunctionContext<GeneralQueryKey, number | string>) => {
+  const [path, params] = queryKey;
+  const cleanedParams = cleanParams(params);
+
+  const { responseData } = await makeApiCall({
     method: 'GET',
     path,
     params: { ...cleanedParams, page: pageParam.toString() },
     errorOnFail: true,
   });
+
+  return responseData;
 };
 
-// TODO: implement react-query for tweets and tweeters, etc.
+export const fetchInitialQueryData = async (
+  context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
+  path: string,
+  getFilters?: (userInfo: UserInfoCookie | null) => GeneralQueryKey[1]
+) => {
+  const userInfoCookie: UserInfoCookie | null = JSON.parse(
+    context.req.cookies?.['auth-token'] ?? null
+  );
+  const filters = getFilters ? getFilters(userInfoCookie) : {};
+  const params = cleanParams(filters);
+
+  const { responseData } = await makeApiCall({
+    method: 'GET',
+    path,
+    params,
+  });
+
+  return responseData;
+};

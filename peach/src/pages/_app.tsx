@@ -20,14 +20,14 @@ import Navbar from '../components/app-shell/Navbar';
 import AuthRouteGuard from '../components/authentication/AuthRouteGuard';
 import WelcomePage from '../components/other/WelcomePage';
 import { UserInfo } from '../lib/api/auth';
-import { fetchFromApi } from '../lib/api/query';
+import { fetchForQuery } from '../lib/api/query';
 import { userInfoAtom } from '../lib/state';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       //@ts-ignore
-      queryFn: fetchFromApi,
+      queryFn: fetchForQuery,
     },
   },
 });
@@ -112,7 +112,7 @@ export default function App(props: AppProps) {
   );
 }
 
-type UserInfoCookie = Omit<UserInfo, 'loggedIn' | 'token'> & { token: string };
+export type UserInfoCookie = Omit<UserInfo, 'loggedIn' | 'token'> & { token: string };
 
 App.getInitialProps = async (context: any) => {
   const userInfoCookie: UserInfoCookie | null = JSON.parse(
