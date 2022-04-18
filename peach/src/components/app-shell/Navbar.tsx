@@ -19,7 +19,7 @@ const Navbar: VoidFunctionComponent<NavbarProps> = () => {
         p="xs"
         fixed
         position={{ top: 0, left: 0 }}
-        sx={authenticated ? {} : { opacity: 0.5, pointerEvents: 'none' }}
+        sx={authenticated ? {} : { opacity: 0.6, pointerEvents: 'none' }}
       >
         <MNavbar.Section grow mt="xs">
           <NavbarLink

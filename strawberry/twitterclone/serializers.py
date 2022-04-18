@@ -3,6 +3,11 @@ from .models import Tweet, Tweeter
 
 
 class TweeterSerializer(serializers.ModelSerializer):
+    tweet_count = serializers.SerializerMethodField()
+
+    def get_tweet_count(self, instance):
+        return instance.tweets.count()
+
     def create(self, validated_data):
         tweeter = Tweeter.objects.create_user(**validated_data)
         return tweeter
@@ -13,13 +18,10 @@ class TweeterSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "profile_name",
-            # "likes",
-            # "following",
-            # "followers",
-            # "tweets",
             "date_joined",
             "email",
             "password",
+            "tweet_count",
         )
         read_only_fields = ("date_joined",)
         extra_kwargs = {

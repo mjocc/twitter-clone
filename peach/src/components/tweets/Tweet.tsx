@@ -34,5 +34,6 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(({ tweet }, ref) => {
     </Card>
   );
 });
+Tweet.displayName = 'Tweet';
 
 export default Tweet;

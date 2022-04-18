@@ -5,6 +5,7 @@ import { useInfiniteQuery } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import { ApiResponse } from '../../lib/api';
 import { GeneralQueryKey, Tweet as TweetType } from '../../lib/api/query';
+import ScrollToTopButton from '../other/ScrollToTopButton';
 import Tweet from './Tweet';
 
 interface TweetListProps {
@@ -45,39 +46,42 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
   }, [observer?.isIntersecting, fetchNextPage]);
 
   return (
-    <Stack mx="auto" sx={{ maxWidth: 550 }}>
-      {isError && (
-        <Alert
-          icon={<AlertCircle size={16} />}
-          title="Something went wrong"
-          color="red"
-          mt="md"
-        >
-          Tweets could not be fetched. Please try again later.
-        </Alert>
-      )}
-      {isSuccess && (
-        <>
-          {data.pages.map((page) =>
-            page?.results?.map((tweet, i, tweetPage) => {
-              const last = i + 1 === tweetPage.length;
-              return (
-                <Tweet
-                  ref={last ? ref : undefined}
-                  key={tweet.id}
-                  tweet={tweet}
-                />
-              );
-            })
-          )}
-        </>
-      )}
-      {(isFetchingNextPage || isLoading) && (
-        <Center>
-          <Loader />
-        </Center>
-      )}
-    </Stack>
+    <>
+      <Stack mx="auto" sx={{ maxWidth: 550 }}>
+        {isError && (
+          <Alert
+            icon={<AlertCircle size={16} />}
+            title="Something went wrong"
+            color="red"
+            mt="md"
+          >
+            Tweets could not be fetched. Please try again later.
+          </Alert>
+        )}
+        {isSuccess && (
+          <>
+            {data.pages.map((page) =>
+              page?.results?.map((tweet, i, tweetPage) => {
+                const last = i + 1 === tweetPage.length;
+                return (
+                  <Tweet
+                    ref={last ? ref : undefined}
+                    key={tweet.id}
+                    tweet={tweet}
+                  />
+                );
+              })
+            )}
+          </>
+        )}
+        {(isFetchingNextPage || isLoading) && (
+          <Center>
+            <Loader />
+          </Center>
+        )}
+      </Stack>
+      <ScrollToTopButton />
+    </>
   );
 };
 

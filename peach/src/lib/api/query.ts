@@ -9,18 +9,19 @@ export type QueryKeyObject<T extends {}> = {
   queryKey: T;
 };
 
-type TweetAuthor = {
+export type Tweeter = {
   id: string;
   username: string;
   profile_name: string;
   date_joined: string;
+  tweet_count: number;
 };
 export type Tweet = {
   id: string;
   text: string;
   created: string;
   reply: boolean;
-  author: TweetAuthor;
+  author: Tweeter;
   replied_tweet: string | null;
   liked: boolean | null;
   like_count: number;
@@ -57,14 +58,9 @@ export const fetchForQuery = async ({
 };
 
 export const fetchInitialQueryData = async (
-  context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
   path: string,
-  getFilters?: (userInfo: UserInfoCookie | null) => GeneralQueryKey[1]
+  filters: GeneralQueryKey[1]
 ) => {
-  const userInfoCookie: UserInfoCookie | null = JSON.parse(
-    context.req.cookies?.['auth-token'] ?? null
-  );
-  const filters = getFilters ? getFilters(userInfoCookie) : {};
   const params = cleanParams(filters);
 
   const { responseData } = await makeApiCall({

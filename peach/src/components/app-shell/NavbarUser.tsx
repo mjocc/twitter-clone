@@ -87,9 +87,9 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
                   circle
                   height={38}
                   animate={false}
-                  sx={{ opacity: 0.5 }}
+                  sx={{ opacity: 0.6 }}
                 />
-                <Box sx={{ flex: 1, opacity: 0.5 }}>
+                <Box sx={{ flex: 1, opacity: 0.6 }}>
                   <Skeleton
                     visible={true}
                     animate={false}

@@ -36,6 +36,7 @@ const defaultHeaders = {
   Accept: 'application/json',
 };
 
+//TODO: type this properly
 export const makeApiCall = async ({
   path,
   exactPath,

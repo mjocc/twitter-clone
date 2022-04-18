@@ -23,4 +23,10 @@ export const logOut = async () =>
     method: 'POST',
   });
 
+export const getUserInfo = async (username: string) =>
+  await makeApiCall({
+    path: '/tweeters',
+    method: 'GET',
+    params: { username },
+  });
 // TODO: write similar logic for sign up
