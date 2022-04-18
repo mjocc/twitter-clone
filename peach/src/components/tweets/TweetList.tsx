@@ -1,4 +1,4 @@
-import { Alert, Box, Center, Loader, Stack } from '@mantine/core';
+import { Alert, Center, Loader, Stack } from '@mantine/core';
 import { useIntersection } from '@mantine/hooks';
 import { useEffect, VoidFunctionComponent } from 'react';
 import { useInfiniteQuery } from 'react-query';
@@ -9,7 +9,7 @@ import Tweet from './Tweet';
 
 interface TweetListProps {
   filters?: GeneralQueryKey[1];
-  initialData: ApiResponse<TweetType>;
+  initialData?: ApiResponse<TweetType>;
 }
 
 const TweetList: VoidFunctionComponent<TweetListProps> = ({
@@ -22,7 +22,6 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
     isLoading,
     isError,
     isSuccess,
-    hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery<ApiResponse<TweetType>, Error, ApiResponse<TweetType>>(
     ['/tweets', queryParams],
@@ -31,10 +30,12 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
         lastPage?.next
           ? new URL(lastPage.next).searchParams.get('page')
           : undefined,
-      initialData: {
-        pages: [initialData],
-        pageParams: [undefined],
-      },
+      initialData: initialData
+        ? {
+            pages: [initialData],
+            pageParams: [undefined],
+          }
+        : undefined,
     }
   );
 
@@ -58,11 +59,17 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
       {isSuccess && (
         <>
           {data.pages.map((page) =>
-            page?.results?.map((tweet) => (
-              <Tweet key={tweet.id} tweet={tweet} />
-            ))
+            page?.results?.map((tweet, i, tweetPage) => {
+              const last = i + 1 === tweetPage.length;
+              return (
+                <Tweet
+                  ref={last ? ref : undefined}
+                  key={tweet.id}
+                  tweet={tweet}
+                />
+              );
+            })
           )}
-          {hasNextPage && !isFetchingNextPage && <Box ref={ref}></Box>}
         </>
       )}
       {(isFetchingNextPage || isLoading) && (

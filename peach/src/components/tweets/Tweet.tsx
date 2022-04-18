@@ -1,5 +1,5 @@
 import { Box, Card, Divider, Group, Paper, Text } from '@mantine/core';
-import { VoidFunctionComponent } from 'react';
+import { forwardRef, VoidFunctionComponent } from 'react';
 import { Tweet as TweetType } from '../../lib/api/query';
 import dateFormat from 'dateformat';
 import User from './User';
@@ -8,9 +8,9 @@ interface TweetProps {
   tweet: TweetType;
 }
 
-const Tweet: VoidFunctionComponent<TweetProps> = ({ tweet }) => {
+const Tweet = forwardRef<HTMLDivElement, TweetProps>(({ tweet }, ref) => {
   return (
-    <Card shadow="sm">
+    <Card shadow="sm" ref={ref}>
       <Box pb={10}>
         <User user={tweet.author} />
       </Box>
@@ -20,7 +20,7 @@ const Tweet: VoidFunctionComponent<TweetProps> = ({ tweet }) => {
       <Text color="dimmed" size="sm">
         {dateFormat(tweet.created, 'h:MM TT · d mmm, yyyy')}
       </Text>
-      <Divider my={5}/>
+      <Divider my={5} />
       <Group>
         <Group spacing={5}>
           <Text weight={700}>{tweet.like_count}</Text>
@@ -33,6 +33,6 @@ const Tweet: VoidFunctionComponent<TweetProps> = ({ tweet }) => {
       </Group>
     </Card>
   );
-};
+});
 
 export default Tweet;
