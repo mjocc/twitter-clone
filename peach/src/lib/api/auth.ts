@@ -36,4 +36,3 @@ export const getUserInfo = async (username: string) =>
     method: 'GET',
     params: { username },
   });
-// TODO: write similar logic for sign up

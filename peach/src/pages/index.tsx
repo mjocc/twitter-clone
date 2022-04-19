@@ -5,6 +5,7 @@ import type {
   NextPage,
 } from 'next';
 import Head from 'next/head';
+import TweetComposer from '../components/tweets/TweetComposer';
 import TweetList from '../components/tweets/TweetList';
 import { ApiResponse } from '../lib/api';
 import { fetchInitialQueryData, Tweet as TweetType } from '../lib/api/query';
@@ -38,6 +39,7 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
       <Head>
         <title>Home | Twitter</title>
       </Head>
+      <TweetComposer />
       <TweetList
         filters={{
           author__followed_by__username: username,
