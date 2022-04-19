@@ -18,7 +18,7 @@ import { logIn } from '../../lib/api/auth';
 import { authFormAtom, userInfoAtom } from '../../lib/state';
 
 interface LogInFormProps {}
-// TODO: most of this is reusable between auth forms - combine into one generic component?
+
 const schema = z.object({
   username: z
     .string()
@@ -30,6 +30,7 @@ export type LogInFormValues = z.infer<typeof schema>;
 const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
   const focusTrapRef = useFocusTrap();
   const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState(false);
   const closeAuthForm = useResetAtom(authFormAtom);
   const [, setUserInfo] = useAtom(userInfoAtom);
 
@@ -45,7 +46,9 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
     values: LogInFormValues,
     event: FormEvent<Element>
   ) => {
+    setLoading(true);
     const { response, responseData } = await logIn(values);
+    setLoading(false);
     if (response.ok && responseData?.loggedIn) {
       setUserInfo(responseData);
       closeAuthForm();
@@ -53,11 +56,10 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
         message: `Now logged in as '${values.username}'`,
         icon: <InfoCircle />,
       });
-      //TODO: move this logic to a reusable hook or something?
-    } else if (responseData?.non_field_errors) {
-      setError(responseData.non_field_errors);
     } else {
-      setError('Something went wrong. Please try again.');
+      if (responseData?.non_field_errors)
+        setError(responseData.non_field_errors);
+      form.setErrors(responseData);
     }
   };
 
@@ -81,8 +83,13 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
           </Alert>
         )}
         <Group position="right" mt="md">
-          <Button type="submit">Log in</Button>
-          {/* // TODO: add loading spinner while processing */}
+          <Button
+            type="submit"
+            loaderProps={{ variant: 'oval' }}
+            loading={loading}
+          >
+            Log in
+          </Button>
         </Group>
       </form>
     </Box>

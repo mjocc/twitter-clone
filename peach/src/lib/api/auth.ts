@@ -1,4 +1,6 @@
 import { makeApiCall } from '.';
+import { LogInFormValues } from '../../components/authentication/LogInForm';
+import { SignUpFormValues } from '../../components/authentication/SignUpForm';
 
 export interface UserInfo {
   token?: null;
@@ -7,15 +9,20 @@ export interface UserInfo {
   profile_name: string;
 }
 
-export const logIn = async (credentials: {
-  username: string;
-  password: string;
-}) =>
+export const logIn = async (credentials: LogInFormValues) =>
   await makeApiCall({
     path: '/obtain-auth-token',
     method: 'POST',
     body: credentials,
   });
+
+export const signUp = async (credentials: SignUpFormValues) => {
+  return await makeApiCall({
+    path: '/tweeters',
+    method: 'POST',
+    body: credentials,
+  });
+};
 
 export const logOut = async () =>
   await makeApiCall({
