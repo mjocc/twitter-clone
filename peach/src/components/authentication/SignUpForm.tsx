@@ -73,7 +73,6 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
         closeAuthForm();
         showNotification({
           message: `Now logged in as '${values.username}'`,
-          icon: <InfoCircle />,
         });
       } else if (responseData?.non_field_errors) {
         setError(responseData.non_field_errors);

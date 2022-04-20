@@ -38,7 +38,6 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
           setUserInfo(null);
           showNotification({
             message: 'Logged out successfully',
-            icon: <InfoCircle />,
           });
         }
       },

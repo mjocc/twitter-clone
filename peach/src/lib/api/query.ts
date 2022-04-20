@@ -1,9 +1,5 @@
-import { GetServerSidePropsContext, PreviewData } from 'next';
-import path from 'path';
-import { ParsedUrlQuery } from 'querystring';
 import { QueryFunctionContext } from 'react-query';
 import { makeApiCall } from '.';
-import { UserInfoCookie } from '../../pages/_app';
 
 export type QueryKeyObject<T extends {}> = {
   queryKey: T;

@@ -54,7 +54,6 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
       closeAuthForm();
       showNotification({
         message: `Now logged in as '${values.username}'`,
-        icon: <InfoCircle />,
       });
     } else {
       if (responseData?.non_field_errors)
