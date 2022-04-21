@@ -11,7 +11,7 @@ export type QueryParams = { [key: string]: string };
 interface MakeApiCallInfoBase extends Omit<RequestInit, 'body'> {
   method: HttpMethod;
   params?: QueryParams;
-  body?: { [key: string]: string | null };
+  body?: { [key: string]: string | number | boolean | null };
   errorOnFail?: boolean;
 }
 type MakeApiCallInfo =

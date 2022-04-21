@@ -70,6 +70,7 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
             aria-label="tweet composer"
             variant="unstyled"
             size="xl"
+            maxLength={240}
             {...form.getInputProps('text')}
           />
           {error && (
