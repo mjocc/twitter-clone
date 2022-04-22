@@ -66,6 +66,29 @@ def like_tweet_view(request, tweet_id=None):
     return Response({"liked": user.likes_tweet(tweet)})
 
 
+@decorators.api_view(["PATCH"])
+@decorators.permission_classes([IsAuthenticated])
+def follow_tweeter_view(request, tweeter_id=None):
+    """
+    API endpoint that allows tweeters to be followed and unfollowed.
+    A `following` boolean parameter should be passed.
+    """
+    following = request.data.get("following")
+    user = request.user
+
+    try:
+        tweeter = Tweeter.objects.get(id=tweeter_id)
+    except Tweeter.DoesNotExist:
+        return Response({"detail": "Not found."}, status=404)
+
+    if following:
+        user.following.add(tweeter)
+    else:
+        user.following.remove(tweeter)
+
+    return Response({"following": user.is_following(tweeter)})
+
+
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(

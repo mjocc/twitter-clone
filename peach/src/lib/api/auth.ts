@@ -1,6 +1,9 @@
+import { showNotification } from '@mantine/notifications';
+import { useAtom, useAtomValue } from 'jotai';
 import { makeApiCall } from '.';
 import { LogInFormValues } from '../../components/authentication/LogInForm';
 import { SignUpFormValues } from '../../components/authentication/SignUpForm';
+import { authenticatedAtom, authFormAtom } from '../state';
 
 export interface UserInfo {
   token?: null;
@@ -36,3 +39,18 @@ export const getUserInfo = async (username: string) =>
     method: 'GET',
     params: { username },
   });
+
+export const useAuthProtected = () => {
+  const authenticated = useAtomValue(authenticatedAtom);
+  const [, setAuthForm] = useAtom(authFormAtom);
+  return (action: string, callback: () => void) => {
+    if (authenticated) {
+      return callback();
+    } else {
+      showNotification({
+        message: `You must be signed-in to ${action}`,
+      });
+      setAuthForm('log-in');
+    }
+  };
+};

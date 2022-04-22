@@ -7,32 +7,71 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { VoidFunctionComponent } from 'react';
+import { showNotification } from '@mantine/notifications';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState, VoidFunctionComponent } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+import { useAuthProtected } from '../../lib/api/auth';
+import { Tweeter } from '../../lib/api/query';
+import { followTweeter } from '../../lib/api/tweeters';
+import { usernameAtom } from '../../lib/state';
 
-interface ProfileBannerProps {
-  profileName: string;
-  numTweets: number;
-}
+interface ProfileBannerProps extends Tweeter {}
 
 const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
-  profileName,
-  numTweets,
+  id,
+  profile_name,
+  username,
+  tweet_count,
+  following: initialFollowing,
 }) => {
+  const [following, setFollowing] = useState<boolean>(!!initialFollowing);
+  const authProtected = useAuthProtected();
+  const selfUsername = useAtomValue(usernameAtom);
+
   const formatter = Intl.NumberFormat('en', { notation: 'compact' });
+  const self = username === selfUsername;
+
+  const { invalidateQueries } = useQueryClient();
+  // TODO: type this properly
+  const { mutate, isLoading } = useMutation(followTweeter, {
+    onSuccess({ responseData }) {
+      invalidateQueries('/tweets');
+      setFollowing(!!responseData?.following);
+    },
+    onError() {
+      showNotification({
+        message: "Something went wrong. The tweeter may've been deleted.",
+        color: 'red',
+      });
+    },
+  });
 
   return (
     <Paper py={10} px={20} sx={{ position: 'sticky', top: 60, zIndex: 100 }}>
       <Group position="apart">
         <Stack>
           <Text size="lg" weight={700} mb={-20}>
-            {profileName}
+            {profile_name}
           </Text>
-          <Text color="dimmed">{formatter.format(numTweets)} tweets</Text>
+          <Text color="dimmed">{formatter.format(tweet_count)} tweets</Text>
         </Stack>
         {/* //TODO: implement this */}
-        <Button>Follow</Button>
+        <Button
+          disabled={self}
+          loading={isLoading}
+          loaderProps={{ variant: 'oval' }}
+          color={following ? 'gray' : 'blue'}
+          onClick={() =>
+            authProtected('follow someone', () =>
+              mutate({ tweeterId: id, following: !following })
+            )
+          }
+        >
+          {following ? 'Unfollow' : 'Follow'}
+        </Button>
       </Group>
-    </Paper>  
+    </Paper>
   );
 };
 

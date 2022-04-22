@@ -32,6 +32,17 @@ class Tweeter(AbstractUser):
             )
         return self.likes.filter(id=tweet_id).exists()
 
+    def is_following(self, tweeter):
+        if isinstance(tweeter, Tweeter):
+            tweeter_id = tweeter.id
+        elif isinstance(tweeter, (str, uuid.UUID)):
+            tweeter_id = tweeter
+        else:
+            raise ValueError(
+                "Must provide a Tweeter object or tweeter id (UUID or str) to check against."
+            )
+        return self.following.filter(id=tweeter_id).exists()
+
     def __str__(self):
         return f"@{self.username}"
 

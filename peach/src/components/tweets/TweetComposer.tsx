@@ -6,11 +6,11 @@ import {
   Group,
   RingProgress,
   Textarea,
-  TextInput,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { FormEvent, useState, VoidFunctionComponent } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
 import { createTweet } from '../../lib/api/tweet';
@@ -27,7 +27,6 @@ export type TweetComposerValues = z.infer<typeof schema>;
 
 const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
   const [error, setError] = useState<null | string>(null);
-  const [loading, setLoading] = useState(false);
 
   const form = useForm<TweetComposerValues>({
     schema: zodResolver(schema),
@@ -39,30 +38,29 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
   const progress = (form.values.text.length / 240) * 100;
   const hasContent = progress > 0;
 
-  const handleSubmit = async (
-    values: TweetComposerValues,
-    event: FormEvent<Element>
-  ) => {
-    setLoading(true);
-    // TODO: find a way to make a user's own tweets come up in their feed
-    const { response, responseData } = await createTweet(values);
-    setLoading(false);
-    if (response.ok) {
-      form.reset()
+  const { invalidateQueries } = useQueryClient();
+  const { mutate, isLoading } = useMutation(createTweet, {
+    //! // FIXME: onsuccess not working
+    onSuccess() {
+      invalidateQueries('/tweets');
+      form.reset();
       showNotification({
         message: 'Tweet created',
       });
-    } else {
+    },
+    onError({ responseData }) {
       if (responseData?.non_field_errors)
         setError(responseData.non_field_errors);
-      form.setErrors(responseData);
-    }
-  };
+      if (responseData) {
+        form.setErrors(responseData);
+      }
+    },
+  });
 
   return (
     <>
       <Box mx="auto" sx={{ maxWidth: 550 }}>
-        <form onSubmit={form.onSubmit(handleSubmit)} noValidate>
+        <form onSubmit={form.onSubmit((values) => mutate(values))} noValidate>
           <Textarea
             required
             autosize
@@ -89,7 +87,7 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
             <Button
               type="submit"
               loaderProps={{ variant: 'oval' }}
-              loading={loading}
+              loading={isLoading}
               disabled={!hasContent}
             >
               Tweet

@@ -5,13 +5,13 @@ import {
   Skeleton,
   Text,
   UnstyledButton,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { useAtom, useAtomValue } from 'jotai';
 import { VoidFunctionComponent } from 'react';
-import { InfoCircle, UserOff } from 'tabler-icons-react';
+import { UserOff } from 'tabler-icons-react';
 import { logOut } from '../../lib/api/auth';
 import { authenticatedAtom, userInfoAtom } from '../../lib/state';
 import User from '../tweets/User';
@@ -79,7 +79,7 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
             }}
           >
             {authenticated ? (
-              <User user={user} chevron />
+              <User user={user} noLink chevron />
             ) : (
               <Group>
                 <Skeleton

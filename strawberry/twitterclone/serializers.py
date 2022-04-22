@@ -4,9 +4,14 @@ from .models import Tweet, Tweeter
 
 class TweeterSerializer(serializers.ModelSerializer):
     tweet_count = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
 
     def get_tweet_count(self, instance):
         return instance.tweets.count()
+
+    def get_following(self, instance):
+        if user := get_user_or_none(self.context):
+            return user.is_following(instance)
 
     def create(self, validated_data):
         tweeter = Tweeter.objects.create_user(**validated_data)
@@ -22,6 +27,7 @@ class TweeterSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "tweet_count",
+            "following",
         )
         read_only_fields = ("date_joined",)
         extra_kwargs = {

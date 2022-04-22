@@ -54,7 +54,7 @@ const Profile: NextPage<ProfileProps> = ({ userInfo, initialData }) => {
       <Head>
         <title>@{username} | Twitter</title>
       </Head>
-      <ProfileBanner profileName={userInfo.profile_name} numTweets={userInfo.tweet_count} />
+      <ProfileBanner {...userInfo} />
       <Box>
         <Tabs tabPadding="lg">
           <Tabs.Tab label="Tweets">

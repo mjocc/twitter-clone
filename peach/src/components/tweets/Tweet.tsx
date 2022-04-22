@@ -2,110 +2,125 @@ import {
   Box,
   Button,
   Card,
+  Center,
   Divider,
   Group,
   LoadingOverlay,
   Text,
   Tooltip,
+  useMantineTheme,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import dateFormat from 'dateformat';
-import { useAtom, useAtomValue } from 'jotai';
-import { forwardRef, useEffect } from 'react';
+import { forwardRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Heart } from 'tabler-icons-react';
+import { useAuthProtected } from '../../lib/api/auth';
 import { Tweet as TweetType } from '../../lib/api/query';
 import { likeTweet } from '../../lib/api/tweet';
-import { authenticatedAtom, authFormAtom } from '../../lib/state';
 import User from './User';
 
-interface TweetProps {
-  tweet: TweetType;
-}
+interface TweetProps extends TweetType {}
 
-const Tweet = forwardRef<HTMLDivElement, TweetProps>(({ tweet }, ref) => {
-  const authenticated = useAtomValue(authenticatedAtom);
-  const [, setAuthForm] = useAtom(authFormAtom);
-  const queryClient = useQueryClient();
-  // TODO: type this properly
-  const { mutate, isLoading, isError } = useMutation(likeTweet, {
-    onSuccess() {
-      queryClient.invalidateQueries('/tweets');
+const Tweet = forwardRef<HTMLDivElement, TweetProps>(
+  (
+    {
+      text,
+      author,
+      created,
+      like_count,
+      reply_count,
+      liked,
+      id,
+      replied_tweet,
+      reply,
     },
-  });
+    ref
+  ) => {
+    const authProtected = useAuthProtected();
+    const { colors } = useMantineTheme();
+    const { invalidateQueries } = useQueryClient();
+    // TODO: type this properly
+    const { mutate, isLoading } = useMutation(likeTweet, {
+      onSuccess() {
+        //TODO: go through all invalidate queries and make them more specific (replace general query function?)
+        invalidateQueries('/tweets');
+      },
+      onError() {
+        showNotification({
+          message: "Something went wrong. The tweete may've been deleted.",
+          color: 'red',
+        });
+      },
+    });
 
-  useEffect(() => {
-    if (isError) {
-      showNotification({
-        message: "Something went wrong. The tweet may've been deleted.",
-        color: 'red',
-      });
-    }
-  }, [isError]);
-
-  return (
-    <Card shadow="sm" ref={ref}>
-      <Box pb={10}>
-        <User user={tweet.author} />
-      </Box>
-      <Text pb={10} size="xl">
-        {tweet.text}
-      </Text>
-      <Text color="dimmed" size="sm">
-        {dateFormat(tweet.created, 'h:MM TT · d mmm, yyyy')}
-      </Text>
-      <Divider my={10} />
-      <Group>
-        <Group spacing={5}>
-          <Text weight={700}>{tweet.like_count}</Text>
-          <Text>{tweet.like_count === 1 ? 'like' : 'likes'}</Text>
+    return (
+      <Card shadow="sm" ref={ref}>
+        <Box pb={10}>
+          <User user={author} />
+        </Box>
+        <Text pb={10} size="xl">
+          {text}
+        </Text>
+        <Text color="dimmed" size="sm">
+          {dateFormat(created, 'h:MM TT · d mmm, yyyy')}
+        </Text>
+        <Divider my={10} />
+        <Group>
+          <Group spacing={5}>
+            <Text weight={700}>{like_count}</Text>
+            <Text>{like_count === 1 ? 'like' : 'likes'}</Text>
+          </Group>
+          <Group spacing={5}>
+            <Text weight={700}>{reply_count}</Text>
+            <Text>replies</Text>
+          </Group>
         </Group>
-        <Group spacing={5}>
-          <Text weight={700}>{tweet.reply_count}</Text>
-          <Text>replies</Text>
-        </Group>
-      </Group>
-      <Divider mt={10} mb={7.5} />
-      <Group position="center">
-        <LoadingOverlay visible={isLoading} />
-        <Tooltip
-          position="bottom"
-          label={tweet.liked ? 'Unlike' : 'Like'}
-          withArrow
-        >
-          <Button
-            variant="subtle"
-            color="pink"
-            radius={100}
-            compact
-            mb={-7.5}
-            //TODO: make this styling work in light mode
-            sx={(theme) => ({
-              height: 38.5,
-              width: 38.5,
-              color: tweet.liked ? theme.colors.pink[9] : theme.colors.gray[0],
-              '&:hover': {
-                color: theme.colors.pink[2],
-              },
-            })}
-            onClick={() => {
-              if (authenticated) {
-                mutate({ tweetId: tweet.id, liked: !tweet.liked });
-              } else {
-                showNotification({
-                  message: 'You must be signed-in to like a tweet',
-                });
-                setAuthForm('log-in');
-              }
-            }}
-          >
-            <Heart />
-          </Button>
-        </Tooltip>
-      </Group>
-    </Card>
-  );
-});
+        <Divider mt={10} />
+        <Card.Section>
+          <Group p={6} position="center">
+            <LoadingOverlay visible={isLoading} zIndex={5} />
+            <Tooltip
+              position="bottom"
+              label={liked ? 'Unlike' : 'Like'}
+              withArrow
+              mb={-4.65}
+            >
+              <Button
+                variant="subtle"
+                color="pink"
+                radius={100}
+                compact
+                //TODO: make this styling work in light mode
+                sx={(theme) => ({
+                  height: 38.5,
+                  width: 38.5,
+                  color: liked
+                    ? theme.colors.pink[7]
+                    : theme.colorScheme === 'dark'
+                    ? theme.colors.gray[0]
+                    : theme.colors.gray[4],
+                  '&:hover': {
+                    color: theme.colors.pink[7],
+                  },
+                })}
+                onClick={() =>
+                  authProtected('like a tweet', () =>
+                    mutate({ tweetId: id, liked: !liked })
+                  )
+                }
+              >
+                <Center sx={(theme) => theme.fn.cover()}>
+                  <Heart fill={colors.pink[7]} fillOpacity={liked ? 1 : 0} />
+                </Center>
+              </Button>
+            </Tooltip>
+          </Group>
+        </Card.Section>
+      </Card>
+    );
+  }
+);
 Tweet.displayName = 'Tweet';
 
 export default Tweet;

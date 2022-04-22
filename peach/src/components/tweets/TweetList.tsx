@@ -58,6 +58,7 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
             Tweets could not be fetched. Please try again later.
           </Alert>
         )}
+        {/* //TODO: add no tweets message if none are found */}
         {isSuccess && (
           <>
             {data.pages.map((page) =>
@@ -67,7 +68,7 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
                   <Tweet
                     ref={last ? ref : undefined}
                     key={tweet.id}
-                    tweet={tweet}
+                    {...tweet}
                   />
                 );
               })

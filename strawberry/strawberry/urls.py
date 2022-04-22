@@ -54,6 +54,7 @@ urlpatterns = [
     path("obtain-auth-token", views.CustomAuthToken.as_view()),
     path("", include(router.urls)),
     path("like-tweet/<uuid:tweet_id>", views.like_tweet_view),
+    path("follow-tweeter/<uuid:tweeter_id>", views.follow_tweeter_view),
     path("api-auth", include("rest_framework.urls", namespace="rest_framework")),
     *schema_urlpatterns,
     path("admin", admin.site.urls),

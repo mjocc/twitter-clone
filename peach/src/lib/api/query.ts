@@ -11,6 +11,7 @@ export type Tweeter = {
   profile_name: string;
   date_joined: string;
   tweet_count: number;
+  following: boolean | null;
 };
 export type Tweet = {
   id: string;
