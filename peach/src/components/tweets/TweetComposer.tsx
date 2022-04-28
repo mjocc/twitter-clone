@@ -9,7 +9,8 @@ import {
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
-import { FormEvent, useState, VoidFunctionComponent } from 'react';
+import { AxiosResponse } from 'axios';
+import { useState, VoidFunctionComponent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
@@ -38,22 +39,23 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
   const progress = (form.values.text.length / 240) * 100;
   const hasContent = progress > 0;
 
-  const { invalidateQueries } = useQueryClient();
+  const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation(createTweet, {
-    //! // FIXME: onsuccess not working
     onSuccess() {
-      invalidateQueries('/tweets');
+      queryClient.invalidateQueries('tweets');
       form.reset();
       showNotification({
         message: 'Tweet created',
       });
     },
-    onError({ responseData }) {
-      if (responseData?.non_field_errors)
-        setError(responseData.non_field_errors);
-      if (responseData) {
-        form.setErrors(responseData);
-      }
+    onError({
+      data,
+    }: AxiosResponse<{
+      text?: string[];
+      non_field_errors?: string[];
+    }>) {
+      if (data?.non_field_errors) setError(data.non_field_errors[0]);
+      form.setErrors(data);
     },
   });
 

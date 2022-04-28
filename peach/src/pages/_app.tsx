@@ -4,7 +4,7 @@ import {
   ColorSchemeProvider,
   Container,
   Global,
-  MantineProvider,
+  MantineProvider
 } from '@mantine/core';
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
@@ -20,17 +20,9 @@ import Navbar from '../components/app-shell/Navbar';
 import AuthRouteGuard from '../components/authentication/AuthRouteGuard';
 import WelcomePage from '../components/other/WelcomePage';
 import { UserInfo } from '../lib/api/auth';
-import { fetchForQuery } from '../lib/api/query';
 import { userInfoAtom } from '../lib/state';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      //@ts-ignore
-      queryFn: fetchForQuery,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -112,7 +104,9 @@ export default function App(props: AppProps) {
   );
 }
 
-export type UserInfoCookie = Omit<UserInfo, 'loggedIn' | 'token'> & { token: string };
+export type UserInfoCookie = Omit<UserInfo, 'loggedIn' | 'token'> & {
+  token: string;
+};
 
 App.getInitialProps = async (context: any) => {
   const userInfoCookie: UserInfoCookie | null = JSON.parse(

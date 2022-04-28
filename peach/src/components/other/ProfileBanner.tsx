@@ -1,20 +1,15 @@
 import {
-  Affix,
-  Button,
-  Container,
-  Group,
+  Button, Group,
   Paper,
   Stack,
-  Text,
+  Text
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useAtomValue } from 'jotai';
-import { useEffect, useState, VoidFunctionComponent } from 'react';
+import { useState, VoidFunctionComponent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { useAuthProtected } from '../../lib/api/auth';
-import { Tweeter } from '../../lib/api/query';
-import { followTweeter } from '../../lib/api/tweeters';
-import { usernameAtom } from '../../lib/state';
+import { followTweeter, Tweeter } from '../../lib/api/tweeters';
+import { useAuthProtected, usernameAtom } from '../../lib/state';
 
 interface ProfileBannerProps extends Tweeter {}
 
@@ -32,12 +27,12 @@ const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
   const formatter = Intl.NumberFormat('en', { notation: 'compact' });
   const self = username === selfUsername;
 
-  const { invalidateQueries } = useQueryClient();
-  // TODO: type this properly
+  const queryClient = useQueryClient();
+  
   const { mutate, isLoading } = useMutation(followTweeter, {
-    onSuccess({ responseData }) {
-      invalidateQueries('/tweets');
-      setFollowing(!!responseData?.following);
+    onSuccess({ data }) {
+      queryClient.invalidateQueries('tweets');
+      setFollowing(data.following);
     },
     onError() {
       showNotification({

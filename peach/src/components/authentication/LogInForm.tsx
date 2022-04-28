@@ -4,15 +4,17 @@ import {
   Button,
   Group,
   PasswordInput,
-  TextInput,
+  TextInput
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
+import type { AxiosError } from 'axios';
 import { useAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import { FormEvent, useState, VoidFunctionComponent } from 'react';
-import { AlertCircle, InfoCircle } from 'tabler-icons-react';
+import { useState, VoidFunctionComponent } from 'react';
+import { useMutation } from 'react-query';
+import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
 import { logIn } from '../../lib/api/auth';
 import { authFormAtom, userInfoAtom } from '../../lib/state';
@@ -30,7 +32,6 @@ export type LogInFormValues = z.infer<typeof schema>;
 const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
   const focusTrapRef = useFocusTrap();
   const [error, setError] = useState<null | string>(null);
-  const [loading, setLoading] = useState(false);
   const closeAuthForm = useResetAtom(authFormAtom);
   const [, setUserInfo] = useAtom(userInfoAtom);
 
@@ -42,29 +43,32 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
     },
   });
 
-  const handleSubmit = async (
-    values: LogInFormValues,
-    event: FormEvent<Element>
-  ) => {
-    setLoading(true);
-    const { response, responseData } = await logIn(values);
-    setLoading(false);
-    if (response.ok && responseData?.loggedIn) {
-      setUserInfo(responseData);
+  const { mutate, isLoading } = useMutation(logIn, {
+    onSuccess({ data }) {
+      setUserInfo(data);
       closeAuthForm();
       showNotification({
-        message: `Now logged in as '${values.username}'`,
+        message: `Now logged in as '${data.username}'`,
       });
-    } else {
-      if (responseData?.non_field_errors)
-        setError(responseData.non_field_errors);
-      form.setErrors(responseData);
-    }
-  };
+    },
+    onError({
+      response,
+    }: AxiosError<{
+      username?: string[];
+      password?: string[];
+      non_field_errors?: string[];
+    }>) {
+      if (response?.data) {
+        const { data } = response;
+        if (data?.non_field_errors) setError(data.non_field_errors[0]);
+        if (data?.username || data?.password) form.setErrors(data);
+      }
+    },
+  });
 
   return (
     <Box mx="auto" px={10} ref={focusTrapRef}>
-      <form onSubmit={form.onSubmit(handleSubmit)} noValidate>
+      <form onSubmit={form.onSubmit((values) => mutate(values))} noValidate>
         <TextInput
           required
           label="Username"
@@ -85,7 +89,7 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
           <Button
             type="submit"
             loaderProps={{ variant: 'oval' }}
-            loading={loading}
+            loading={isLoading}
           >
             Log in
           </Button>

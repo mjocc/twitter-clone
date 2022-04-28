@@ -1,23 +1,38 @@
-import { makeApiCall } from '.';
+import { api, ApiResponse } from '.';
 import { TweetComposerValues } from '../../components/tweets/TweetComposer';
-// TODO: make into react query mutations
-export const createTweet = async (values: TweetComposerValues) =>
-  await makeApiCall({
-    path: '/tweets',
-    method: 'POST',
-    body: { ...values, replied_tweet: null },
-  });
+import { Tweeter } from './tweeters';
 
-export const likeTweet = async ({
+export type Tweet = {
+  id: string;
+  text: string;
+  created: string;
+  reply: boolean;
+  author: Tweeter;
+  replied_tweet: string | null;
+  liked: boolean | null;
+  like_count: number;
+  reply_count: number;
+};
+
+export type TweetFilters = Partial<{
+  replied_tweet: string;
+  author__username: string;
+  author__followed_by__username: string;
+  liked_by__username: string;
+  reply: string;
+  page: number;
+}>;
+
+export const fetchTweets = (filters?: TweetFilters) =>
+  api.get<ApiResponse<Tweet>>('/tweets', { params: filters });
+
+export const createTweet = (values: TweetComposerValues) =>
+  api.post<Tweet>('/tweets', { ...values, replied_tweet: null });
+
+export const likeTweet = ({
   tweetId,
   liked,
 }: {
   tweetId: string;
   liked: boolean;
-}) =>
-  await makeApiCall({
-    path: `/like-tweet/${tweetId}`,
-    method: 'PATCH',
-    body: { liked },
-    errorOnFail: true,
-  });
+}) => api.patch<{ liked: boolean }>(`/like-tweet/${tweetId}`, { liked });

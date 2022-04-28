@@ -1,9 +1,7 @@
-import { showNotification } from '@mantine/notifications';
-import { useAtom, useAtomValue } from 'jotai';
-import { makeApiCall } from '.';
+import { api, ApiResponse } from '.';
 import { LogInFormValues } from '../../components/authentication/LogInForm';
 import { SignUpFormValues } from '../../components/authentication/SignUpForm';
-import { authenticatedAtom, authFormAtom } from '../state';
+import { Tweeter } from './tweeters';
 
 export interface UserInfo {
   token?: null;
@@ -12,45 +10,20 @@ export interface UserInfo {
   profile_name: string;
 }
 
-export const logIn = async (credentials: LogInFormValues) =>
-  await makeApiCall({
-    path: '/obtain-auth-token',
-    method: 'POST',
-    body: credentials,
-  });
-
-export const signUp = async (credentials: SignUpFormValues) => {
-  return await makeApiCall({
-    path: '/tweeters',
-    method: 'POST',
-    body: credentials,
-  });
+type LogInResponse = {
+  username: string;
+  profile_name: string;
+  loggedIn: boolean;
 };
 
-export const logOut = async () =>
-  await makeApiCall({
-    exactPath: '/api/log-out',
-    method: 'POST',
-  });
+export const logIn = (credentials: LogInFormValues) =>
+  api.post<LogInResponse>('/obtain-auth-token', credentials);
 
-export const getUserInfo = async (username: string) =>
-  await makeApiCall({
-    path: '/tweeters',
-    method: 'GET',
-    params: { username },
-  });
+export const signUp = (credentials: SignUpFormValues) =>
+  api.post<Tweeter>('/tweeters', credentials);
 
-export const useAuthProtected = () => {
-  const authenticated = useAtomValue(authenticatedAtom);
-  const [, setAuthForm] = useAtom(authFormAtom);
-  return (action: string, callback: () => void) => {
-    if (authenticated) {
-      return callback();
-    } else {
-      showNotification({
-        message: `You must be signed-in to ${action}`,
-      });
-      setAuthForm('log-in');
-    }
-  };
-};
+export const logOut = () =>
+  api.post<{ loggedIn: false }>('/api/log-out', null, { baseURL: '' });
+
+export const getUserInfo = (username: string) =>
+  api.get<ApiResponse<Tweeter>>('/tweeters', { params: { username } });

@@ -15,8 +15,8 @@ import dateFormat from 'dateformat';
 import { forwardRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Heart } from 'tabler-icons-react';
-import { useAuthProtected } from '../../lib/api/auth';
-import { Tweet as TweetType } from '../../lib/api/query';
+import { useAuthProtected } from '../../lib/state';
+import { Tweet as TweetType } from '../../lib/api/tweet';
 import { likeTweet } from '../../lib/api/tweet';
 import User from './User';
 
@@ -39,16 +39,16 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
   ) => {
     const authProtected = useAuthProtected();
     const { colors } = useMantineTheme();
-    const { invalidateQueries } = useQueryClient();
-    // TODO: type this properly
+    const queryClient = useQueryClient();
     const { mutate, isLoading } = useMutation(likeTweet, {
       onSuccess() {
         //TODO: go through all invalidate queries and make them more specific (replace general query function?)
-        invalidateQueries('/tweets');
+        //TODO: use returned data to update value?
+        queryClient.invalidateQueries('tweets');
       },
       onError() {
         showNotification({
-          message: "Something went wrong. The tweete may've been deleted.",
+          message: "Something went wrong. The tweet may've been deleted.",
           color: 'red',
         });
       },

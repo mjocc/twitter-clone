@@ -3,18 +3,22 @@ import { useIntersection } from '@mantine/hooks';
 import { useEffect, VoidFunctionComponent } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
-import { ApiResponse } from '../../lib/api';
-import { GeneralQueryKey, Tweet as TweetType } from '../../lib/api/query';
+import { api, ApiResponse } from '../../lib/api';
+import {
+  fetchTweets,
+  Tweet as TweetType,
+  TweetFilters,
+} from '../../lib/api/tweet';
 import ScrollToTopButton from '../other/ScrollToTopButton';
 import Tweet from './Tweet';
 
 interface TweetListProps {
-  filters?: GeneralQueryKey[1];
+  filters?: TweetFilters;
   initialData?: ApiResponse<TweetType>;
 }
 
 const TweetList: VoidFunctionComponent<TweetListProps> = ({
-  filters: queryParams = {},
+  filters,
   initialData,
 }) => {
   const {
@@ -24,11 +28,13 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
     isError,
     isSuccess,
     fetchNextPage,
-  } = useInfiniteQuery<ApiResponse<TweetType>, Error, ApiResponse<TweetType>>(
-    ['/tweets', queryParams],
+  } = useInfiniteQuery(
+    ['tweets', { filters }],
+    async ({ pageParam = 1 }) =>
+      (await fetchTweets({ page: pageParam, ...filters })).data,
     {
       getNextPageParam: (lastPage) =>
-        lastPage?.next
+        lastPage.next
           ? new URL(lastPage.next).searchParams.get('page')
           : undefined,
       initialData: initialData

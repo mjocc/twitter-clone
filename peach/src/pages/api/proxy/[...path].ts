@@ -47,7 +47,7 @@ const handler: NextApiHandler = (req, res) => {
     };
 
     const pathname = req.url as string;
-    const isLogin = pathname === '/api/proxy/obtain-auth-token?';
+    const isLogin = pathname === '/api/proxy/obtain-auth-token';
     const cookies = new Cookies(req, res);
     const authInfo = cookies.get('auth-token');
     req.url = pathname.replace(/^\/api\/proxy/, '');

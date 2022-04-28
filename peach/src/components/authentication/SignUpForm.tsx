@@ -2,21 +2,21 @@ import {
   Alert,
   Box,
   Button,
-  Group,
-  PasswordInput,
-  TextInput,
+  Group, TextInput
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
+import { AxiosError } from 'axios';
 import { useAtom } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
-import { FormEvent, useState, VoidFunctionComponent } from 'react';
-import { AlertCircle, InfoCircle } from 'tabler-icons-react';
+import { useState, VoidFunctionComponent } from 'react';
+import { useMutation } from 'react-query';
+import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
 import { logIn, signUp } from '../../lib/api/auth';
 import { authFormAtom, userInfoAtom } from '../../lib/state';
-import PasswordStrengthInput, { requirements } from './PasswordStrengthInput';
+import PasswordStrengthInput from './PasswordStrengthInput';
 
 interface SignUpFormProps {}
 
@@ -45,7 +45,6 @@ export type SignUpFormValues = z.infer<typeof schema>;
 const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
   const focusTrapRef = useFocusTrap();
   const [error, setError] = useState<null | string>(null);
-  const [loading, setLoading] = useState(false);
   const closeAuthForm = useResetAtom(authFormAtom);
   const [, setUserInfo] = useAtom(userInfoAtom);
 
@@ -59,37 +58,63 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
     },
   });
 
-  const handleSubmit = async (
-    values: SignUpFormValues,
-    event: FormEvent<Element>
-  ) => {
-    setLoading(true);
-    const signUpRep = await signUp(values);
-    if (signUpRep.response.ok) {
-      const { response, responseData } = await logIn(values);
-      setLoading(false);
-      if (response.ok && responseData?.loggedIn) {
-        setUserInfo(responseData);
-        closeAuthForm();
-        showNotification({
-          message: `Now logged in as '${values.username}'`,
-        });
-      } else if (responseData?.non_field_errors) {
-        setError(responseData.non_field_errors);
-      } else {
-        setError('Something went wrong. Please try again.');
+  const logInMutation = useMutation(logIn, {
+    onSuccess({ data }) {
+      setUserInfo(data);
+      closeAuthForm();
+      showNotification({
+        message: `Now logged in as '${data.username}'`,
+      });
+    },
+    onError({
+      response,
+    }: AxiosError<{
+      username?: string[];
+      password?: string[];
+      non_field_errors?: string[];
+    }>) {
+      if (response?.data) {
+        const { data } = response;
+        if (data?.non_field_errors) setError(data.non_field_errors[0]);
+        else setError('Something went wrong. Please try again.');
       }
-    } else {
-      setLoading(false);
-      if (signUpRep.responseData?.non_field_errors)
-        setError(signUpRep.responseData.non_field_errors);
-      form.setErrors(signUpRep.responseData);
-    }
-  };
+    },
+  });
+
+  const signUpMutation = useMutation(signUp, {
+    onSuccess({ data }) {
+      logInMutation.mutate({
+        username: data.username,
+        password: form.values.password,
+      });
+    },
+    onError({
+      response,
+    }: AxiosError<{
+      username?: string[];
+      profile_name?: string[];
+      email?: string[];
+      password?: string[];
+      non_field_errors?: string[];
+    }>) {
+      if (response?.data) {
+        const { data } = response;
+        if (data?.non_field_errors) setError(data.non_field_errors[0]);
+        if (data?.username || data?.password) form.setErrors(data);
+        if (!(data?.non_field_errors || data?.username || data?.password))
+          setError('Something went wrong. Please try again.');
+      }
+    },
+  });
+
+  const isLoading = logInMutation.isLoading || signUpMutation.isLoading;
 
   return (
     <Box mx="auto" px={10} ref={focusTrapRef}>
-      <form onSubmit={form.onSubmit(handleSubmit)} noValidate>
+      <form
+        onSubmit={form.onSubmit((values) => signUpMutation.mutate(values))}
+        noValidate
+      >
         <TextInput
           required
           label="Username"
@@ -121,7 +146,7 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
           <Button
             type="submit"
             loaderProps={{ variant: 'oval' }}
-            loading={loading}
+            loading={isLoading}
           >
             Sign up
           </Button>

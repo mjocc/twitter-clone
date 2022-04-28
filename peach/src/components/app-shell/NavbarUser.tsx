@@ -5,12 +5,13 @@ import {
   Skeleton,
   Text,
   UnstyledButton,
-  useMantineTheme
+  useMantineTheme,
 } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { useAtom, useAtomValue } from 'jotai';
 import { VoidFunctionComponent } from 'react';
+import { useMutation } from 'react-query';
 import { UserOff } from 'tabler-icons-react';
 import { logOut } from '../../lib/api/auth';
 import { authenticatedAtom, userInfoAtom } from '../../lib/state';
@@ -24,6 +25,15 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
   const [user, setUserInfo] = useAtom(userInfoAtom);
   const modals = useModals();
 
+  const { mutate } = useMutation(logOut, {
+    onSuccess() {
+      setUserInfo(null);
+      showNotification({
+        message: 'Logged out successfully',
+      });
+    },
+  });
+
   const openLogOutConfirmationModal = () =>
     modals.openConfirmModal({
       title: 'Log out of your account',
@@ -32,15 +42,7 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
       labels: { confirm: 'Log out', cancel: 'Go back' },
       confirmProps: { color: 'blue' },
       withCloseButton: false,
-      onConfirm: async () => {
-        const { response, responseData } = await logOut();
-        if (response.ok && responseData?.loggedIn === false) {
-          setUserInfo(null);
-          showNotification({
-            message: 'Logged out successfully',
-          });
-        }
-      },
+      onConfirm: mutate,
     });
 
   return (

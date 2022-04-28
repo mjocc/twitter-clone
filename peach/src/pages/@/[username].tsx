@@ -1,4 +1,5 @@
 import { Box, Tabs } from '@mantine/core';
+import axios from 'axios';
 import type {
   GetServerSideProps,
   InferGetServerSidePropsType,
@@ -7,37 +8,50 @@ import type {
 import Head from 'next/head';
 import ProfileBanner from '../../components/other/ProfileBanner';
 import TweetList from '../../components/tweets/TweetList';
+import { ApiResponse } from '../../lib/api';
 import { getUserInfo } from '../../lib/api/auth';
-import { fetchInitialQueryData, Tweeter } from '../../lib/api/query';
+import { fetchTweets, Tweet } from '../../lib/api/tweet';
+import { Tweeter } from '../../lib/api/tweeters';
 
 export const getServerSideProps: GetServerSideProps<{
   userInfo: Tweeter;
   initialData: {
-    tweets: any;
-    replies: any;
-    likes: any;
+    tweets: ApiResponse<Tweet>;
+    replies: ApiResponse<Tweet>;
+    likes: ApiResponse<Tweet>;
   };
 }> = async (context) => {
   const { username } = context.params as { username?: string };
   if (!username) return { notFound: true };
 
-  const { response, responseData } = await getUserInfo(username);
-  if (!response.ok) return { notFound: true };
-  if ((responseData?.count ?? 0) === 0) return { notFound: true };
-  const userInfo: Tweeter = responseData?.results?.[0];
+  let data;
+  try {
+    ({ data } = await getUserInfo(username));
+  } catch (error) {
+    return { notFound: true };
+  }
+
+  if (data.count === 0) return { notFound: true };
+  const userInfo: Tweeter = data.results[0];
 
   const initialData = {
-    tweets: await fetchInitialQueryData('/tweets', {
-      author__username: username,
-      reply: 'false',
-    }),
-    replies: await fetchInitialQueryData('/tweets', {
-      author__username: username,
-    }),
-    likes: await fetchInitialQueryData('/tweets', {
-      liked_by__username: username,
-      reply: 'false',
-    }),
+    tweets: (
+      await fetchTweets({
+        author__username: username,
+        reply: 'false',
+      })
+    ).data,
+    replies: (
+      await fetchTweets({
+        author__username: username,
+      })
+    ).data,
+    likes: (
+      await fetchTweets({
+        liked_by__username: username,
+        reply: 'false',
+      })
+    ).data,
   };
   return {
     props: { userInfo, initialData },
@@ -48,7 +62,7 @@ type ProfileProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 const Profile: NextPage<ProfileProps> = ({ userInfo, initialData }) => {
   const username = userInfo.username;
-  
+
   return (
     <>
       <Head>
