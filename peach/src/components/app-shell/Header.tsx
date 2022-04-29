@@ -3,7 +3,7 @@ import {
   Group,
   Header as MantineHeader,
   Title,
-  UnstyledButton
+  UnstyledButton,
 } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -20,8 +20,8 @@ const Header: VoidFunctionComponent<HeaderProps> = () => {
   return (
     <>
       <MantineHeader
-        height={60}
-        p="xs"
+        height={61}
+        p="sm"
         fixed
         position={{ top: 0, left: 0 }}
         sx={{ width: '100vw' }}

@@ -15,6 +15,7 @@ export type Tweet = {
 };
 
 export type TweetFilters = Partial<{
+  search: string;
   replied_tweet: string;
   author__username: string;
   author__followed_by__username: string;

@@ -8,18 +8,17 @@ import {
   LoadingOverlay,
   Text,
   Tooltip,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import dateFormat from 'dateformat';
-import { forwardRef } from 'react';
+import { useRouter } from 'next/router';
+import { forwardRef, VoidFunctionComponent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Heart } from 'tabler-icons-react';
+import { likeTweet, Tweet as TweetType } from '../../lib/api/tweets';
 import { useAuthProtected } from '../../lib/state';
-import { Tweet as TweetType } from '../../lib/api/tweet';
-import { likeTweet } from '../../lib/api/tweet';
 import User from './User';
-import { useRouter } from 'next/router';
 
 interface TweetProps extends TweetType {
   noLink?: boolean;
@@ -27,7 +26,10 @@ interface TweetProps extends TweetType {
 
 // TODO: add hashtags (in database) and ability to @
 
-const Tweet = forwardRef<HTMLDivElement, TweetProps>(
+const Tweet = forwardRef<
+  HTMLDivElement,
+  TweetProps
+>(
   (
     {
       text,
@@ -64,7 +66,7 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
     return (
       <Card shadow="sm" ref={ref}>
         <Box pb={10}>
-          <User user={author} />
+          <User {...author} />
         </Box>
         <Box
           className="test"

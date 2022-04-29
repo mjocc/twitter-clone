@@ -10,7 +10,7 @@ import ProfileBanner from '../../components/other/ProfileBanner';
 import TweetList from '../../components/tweets/TweetList';
 import { ApiResponse } from '../../lib/api';
 import { getUserInfo } from '../../lib/api/auth';
-import { fetchTweets, Tweet } from '../../lib/api/tweet';
+import { fetchTweets, Tweet } from '../../lib/api/tweets';
 import { Tweeter } from '../../lib/api/tweeters';
 
 export const getServerSideProps: GetServerSideProps<{

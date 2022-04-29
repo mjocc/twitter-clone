@@ -4,12 +4,18 @@ import { VoidFunctionComponent } from 'react';
 import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
 
 interface UserProps {
-  user: { username: string; profile_name: string } | null;
+  username?: string;
+  profile_name?: string;
   noLink?: boolean;
   chevron?: boolean;
 }
 
-const User: VoidFunctionComponent<UserProps> = ({ user, noLink, chevron }) => {
+const User: VoidFunctionComponent<UserProps> = ({
+  username,
+  profile_name,
+  noLink,
+  chevron,
+}) => {
   const theme = useMantineTheme();
 
   const component = (
@@ -26,10 +32,10 @@ const User: VoidFunctionComponent<UserProps> = ({ user, noLink, chevron }) => {
           weight={600}
           sx={{ '&:hover': { textDecoration: 'underline' } }}
         >
-          {user?.profile_name}&nbsp;
+          {profile_name}&nbsp;
         </Text>
         <Text color="dimmed" size="xs">
-          @{user?.username}
+          @{username}
         </Text>
       </Box>
 
@@ -45,7 +51,7 @@ const User: VoidFunctionComponent<UserProps> = ({ user, noLink, chevron }) => {
   return noLink ? (
     component
   ) : (
-    <Link href={`/@/${user?.username}`}>
+    <Link href={`/@/${username}`}>
       <a style={{ textDecoration: 'none' }}>{component}</a>
     </Link>
   );

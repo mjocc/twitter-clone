@@ -8,7 +8,7 @@ import Head from 'next/head';
 import TweetComposer from '../components/tweets/TweetComposer';
 import TweetList from '../components/tweets/TweetList';
 import { api, ApiResponse } from '../lib/api';
-import { fetchTweets, Tweet as TweetType } from '../lib/api/tweet';
+import { fetchTweets, Tweet as TweetType } from '../lib/api/tweets';
 import { usernameAtom } from '../lib/state';
 import { UserInfoCookie } from './_app';
 

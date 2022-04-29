@@ -8,7 +8,7 @@ import Head from 'next/head';
 import { useQuery } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import Tweet from '../../components/tweets/Tweet';
-import { fetchTweet, Tweet as TweetType } from '../../lib/api/tweet';
+import { fetchTweet, Tweet as TweetType } from '../../lib/api/tweets';
 
 export const getServerSideProps: GetServerSideProps<{
   initialData: TweetType;

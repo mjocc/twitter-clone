@@ -8,7 +8,7 @@ import {
   fetchTweets,
   Tweet as TweetType,
   TweetFilters,
-} from '../../lib/api/tweet';
+} from '../../lib/api/tweets';
 import ScrollToTopButton from '../other/ScrollToTopButton';
 import Tweet from './Tweet';
 

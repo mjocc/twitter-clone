@@ -1,4 +1,4 @@
-import { api } from '.';
+import { api, ApiResponse } from '.';
 
 export type Tweeter = {
   id: string;
@@ -10,10 +10,14 @@ export type Tweeter = {
 };
 
 export type TweeterFilters = Partial<{
+  search: string;
   username: string;
   following__username: string;
   followed_by__username: string;
 }>;
+
+export const fetchTweeters = (filters?: TweeterFilters) =>
+  api.get<ApiResponse<Tweeter>>('/tweeters', { params: filters });
 
 export const followTweeter = async ({
   tweeterId,

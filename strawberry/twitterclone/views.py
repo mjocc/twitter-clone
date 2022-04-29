@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.filters import SearchFilter
 
 from .models import Tweet, Tweeter
 from .permissions import DeleteIfAuthor, ModifyIfUser
@@ -17,7 +18,12 @@ class TweeterViewSet(viewsets.ModelViewSet):
     queryset = Tweeter.objects.all()
     serializer_class = TweeterSerializer
     permission_classes = [ModifyIfUser]
-    filterset_fields = ("username", "following__username", "followed_by__username")
+    filterset_fields = (
+        "username",
+        "following__username",
+        "followed_by__username",
+    )
+    search_fields = ("username", "profile_name")
 
 
 class TweetViewSet(
@@ -41,6 +47,7 @@ class TweetViewSet(
         "liked_by__username",
         "reply",
     )
+    search_fields = ("text",)
 
 
 @decorators.api_view(["PATCH"])

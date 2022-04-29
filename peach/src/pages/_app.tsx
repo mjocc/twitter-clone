@@ -84,7 +84,7 @@ export default function App(props: AppProps) {
                   header={<Header />}
                   styles={(theme) => ({
                     main: {
-                      marginTop: 60,
+                      marginTop: 61,
                       marginLeft: 300,
                     },
                   })}

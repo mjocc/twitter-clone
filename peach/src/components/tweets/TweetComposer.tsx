@@ -15,7 +15,7 @@ import { useState, VoidFunctionComponent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
-import { createTweet } from '../../lib/api/tweet';
+import { createTweet } from '../../lib/api/tweets';
 
 interface TweetComposerProps {}
 
