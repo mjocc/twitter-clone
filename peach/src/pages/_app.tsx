@@ -90,7 +90,7 @@ export default function App(props: AppProps) {
                   })}
                 >
                   <Container>
-                    <AuthRouteGuard backup={<WelcomePage />}>
+                    <AuthRouteGuard fallback={<WelcomePage />}>
                       <Component {...pageProps} />
                     </AuthRouteGuard>
                   </Container>

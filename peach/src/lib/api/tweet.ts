@@ -23,6 +23,8 @@ export type TweetFilters = Partial<{
   page: number;
 }>;
 
+export const fetchTweet = (id: string) => api.get<Tweet>(`/tweets/${id}`);
+
 export const fetchTweets = (filters?: TweetFilters) =>
   api.get<ApiResponse<Tweet>>('/tweets', { params: filters });
 

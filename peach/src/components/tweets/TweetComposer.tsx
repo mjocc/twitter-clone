@@ -6,6 +6,7 @@ import {
   Group,
   RingProgress,
   Textarea,
+  useMantineTheme,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
@@ -27,6 +28,7 @@ const schema = z.object({
 export type TweetComposerValues = z.infer<typeof schema>;
 
 const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
+  const theme = useMantineTheme();
   const [error, setError] = useState<null | string>(null);
 
   const form = useForm<TweetComposerValues>({
@@ -83,7 +85,16 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
               <RingProgress
                 size={32}
                 thickness={3}
-                sections={[{ value: progress, color: 'blue' }]}
+                sections={[
+                  { value: progress, color: 'blue' },
+                  {
+                    value: 100 - progress,
+                    color:
+                      theme.colorScheme === 'dark'
+                        ? theme.colors.dark[4]
+                        : theme.colors.gray[3],
+                  },
+                ]}
               />
             )}
             <Button

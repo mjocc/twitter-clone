@@ -19,8 +19,13 @@ import { useAuthProtected } from '../../lib/state';
 import { Tweet as TweetType } from '../../lib/api/tweet';
 import { likeTweet } from '../../lib/api/tweet';
 import User from './User';
+import { useRouter } from 'next/router';
 
-interface TweetProps extends TweetType {}
+interface TweetProps extends TweetType {
+  noLink?: boolean;
+}
+
+// TODO: add hashtags (in database) and ability to @
 
 const Tweet = forwardRef<HTMLDivElement, TweetProps>(
   (
@@ -34,10 +39,12 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
       id,
       replied_tweet,
       reply,
+      noLink,
     },
     ref
   ) => {
     const authProtected = useAuthProtected();
+    const router = useRouter();
     const { colors } = useMantineTheme();
     const queryClient = useQueryClient();
     const { mutate, isLoading } = useMutation(likeTweet, {
@@ -59,12 +66,23 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
         <Box pb={10}>
           <User user={author} />
         </Box>
-        <Text pb={10} size="xl">
-          {text}
-        </Text>
-        <Text color="dimmed" size="sm">
-          {dateFormat(created, 'h:MM TT · d mmm, yyyy')}
-        </Text>
+        <Box
+          className="test"
+          {...(!noLink && {
+            sx: (theme) => ({
+              cursor: 'pointer',
+              '&:hover': { backgroundColor: theme.colors.dark[5] },
+            }),
+            onClick: () => router.push(`/tweet/${id}`),
+          })}
+        >
+          <Text pb={10} size="xl">
+            {text}
+          </Text>
+          <Text color="dimmed" size="sm" className="subTest">
+            {dateFormat(created, 'h:MM TT · d mmm, yyyy')}
+          </Text>
+        </Box>
         <Divider my={10} />
         <Group>
           <Group spacing={5}>
@@ -91,8 +109,8 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
                 color="pink"
                 radius={100}
                 compact
-                //TODO: make this styling work in light mode
                 sx={(theme) => ({
+                  zIndex: 5,
                   height: 38.5,
                   width: 38.5,
                   color: liked

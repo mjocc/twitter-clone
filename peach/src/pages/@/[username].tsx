@@ -36,21 +36,18 @@ export const getServerSideProps: GetServerSideProps<{
 
   const initialResponses = await Promise.all([
     fetchTweets({
-        author__username: username,
-        reply: 'false',
-      })
-    ),
+      author__username: username,
+      reply: 'false',
+    }),
     fetchTweets({
-        author__username: username,
-      })
-    ),
+      author__username: username,
+    }),
     fetchTweets({
-        liked_by__username: username,
-        reply: 'false',
-      })
-    ),
-  };
-  const [tweets, replies, likes] = initialResponses.map(res => res.data);
+      liked_by__username: username,
+      reply: 'false',
+    }),
+  ]);
+  const [tweets, replies, likes] = initialResponses.map((res) => res.data);
   const initialData = { tweets, replies, likes };
   return {
     props: { userInfo, initialData },
@@ -65,10 +62,10 @@ const Profile: NextPage<ProfileProps> = ({ userInfo, initialData }) => {
   return (
     <>
       <Head>
-        <title>@{username} | Twitter</title>
+        <title>{userInfo.profile_name} (@{username}) | Twitter</title>
       </Head>
       <ProfileBanner {...userInfo} />
-      <Box>
+      <Box my={5} >
         <Tabs tabPadding="lg">
           <Tabs.Tab label="Tweets">
             <TweetList

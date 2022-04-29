@@ -1,9 +1,4 @@
-import {
-  Button, Group,
-  Paper,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Avatar, Button, Group, Paper, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useAtomValue } from 'jotai';
 import { useState, VoidFunctionComponent } from 'react';
@@ -28,7 +23,7 @@ const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
   const self = username === selfUsername;
 
   const queryClient = useQueryClient();
-  
+
   const { mutate, isLoading } = useMutation(followTweeter, {
     onSuccess({ data }) {
       queryClient.invalidateQueries('tweets');
@@ -45,13 +40,18 @@ const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
   return (
     <Paper py={10} px={20} sx={{ position: 'sticky', top: 60, zIndex: 100 }}>
       <Group position="apart">
-        <Stack>
-          <Text size="lg" weight={700} mb={-20}>
-            {profile_name}
-          </Text>
-          <Text color="dimmed">{formatter.format(tweet_count)} tweets</Text>
-        </Stack>
-        {/* //TODO: implement this */}
+        <Group>
+          <Avatar
+            src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
+            radius="xl"
+          />
+          <Stack>
+            <Text size="lg" weight={700} mb={-20}>
+              {profile_name}
+            </Text>
+            <Text color="dimmed">{formatter.format(tweet_count)} tweets</Text>
+          </Stack>
+        </Group>
         <Button
           disabled={self}
           loading={isLoading}

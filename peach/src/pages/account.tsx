@@ -1,6 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
+// TODO: implement account page
+
 const Account: NextPage = () => {
   return (
     <>
