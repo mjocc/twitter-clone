@@ -34,25 +34,24 @@ export const getServerSideProps: GetServerSideProps<{
   if (data.count === 0) return { notFound: true };
   const userInfo: Tweeter = data.results[0];
 
-  const initialData = {
-    tweets: (
-      await fetchTweets({
+  const initialResponses = await Promise.all([
+    fetchTweets({
         author__username: username,
         reply: 'false',
       })
-    ).data,
-    replies: (
-      await fetchTweets({
+    ),
+    fetchTweets({
         author__username: username,
       })
-    ).data,
-    likes: (
-      await fetchTweets({
+    ),
+    fetchTweets({
         liked_by__username: username,
         reply: 'false',
       })
-    ).data,
+    ),
   };
+  const [tweets, replies, likes] = initialResponses.map(res => res.data);
+  const initialData = { tweets, replies, likes };
   return {
     props: { userInfo, initialData },
   };
