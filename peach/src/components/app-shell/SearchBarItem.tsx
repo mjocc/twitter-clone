@@ -13,7 +13,7 @@ const SearchBarItem: VoidFunctionComponent<SearchBarItemProps> = forwardRef<
 >(({ username, profile_name, ...others }, ref) => {
   return (
     <Box ref={ref} p={5} {...others}>
-      <User {...{ username, profile_name }} noLink />
+      <User {...{ username, profile_name }} />
     </Box>
   );
 });

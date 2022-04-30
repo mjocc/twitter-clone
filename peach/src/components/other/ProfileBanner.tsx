@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { Button, Card, Group, Paper, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useAtomValue } from 'jotai';
 import { useState, VoidFunctionComponent } from 'react';
@@ -39,7 +39,17 @@ const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
   });
 
   return (
-    <Paper py={10} px={20} sx={{ position: 'sticky', top: 60, zIndex: 100 }}>
+    <Card
+      py={10}
+      px={20}
+      sx={(theme) => ({
+        position: 'sticky',
+        top: 60,
+        zIndex: 100,
+        backgroundColor:
+          theme.colorScheme == 'dark' ? theme.colors.dark[7] : theme.white,
+      })}
+    >
       <Group position="apart">
         <Group>
           <UserAvatar username={username} />
@@ -64,7 +74,7 @@ const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
           {following ? 'Unfollow' : 'Follow'}
         </Button>
       </Group>
-    </Paper>
+    </Card>
   );
 };
 

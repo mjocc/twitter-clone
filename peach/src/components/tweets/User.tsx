@@ -7,27 +7,26 @@ import UserAvatar from './UserAvatar';
 interface UserProps {
   username?: string;
   profile_name?: string;
-  noLink?: boolean;
   chevron?: boolean;
 }
 
 const User: VoidFunctionComponent<UserProps> = ({
   username,
   profile_name,
-  noLink,
   chevron,
 }) => {
   const theme = useMantineTheme();
 
-  const component = (
+  return (
     <Group>
       <UserAvatar username={username} />
       <Box sx={{ flex: 1 }}>
         <Text
-          color={theme.colorScheme === 'dark' ? theme.colors.dark[0] : 'black'}
+          color={
+            theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black
+          }
           size="sm"
           weight={600}
-          sx={{ '&:hover': { textDecoration: 'underline' } }}
         >
           {profile_name}&nbsp;
         </Text>
@@ -43,14 +42,6 @@ const User: VoidFunctionComponent<UserProps> = ({
           <ChevronLeft size={18} />
         ))}
     </Group>
-  );
-
-  return noLink ? (
-    component
-  ) : (
-    <Link href={`/@/${username}`}>
-      <a style={{ textDecoration: 'none' }}>{component}</a>
-    </Link>
   );
 };
 

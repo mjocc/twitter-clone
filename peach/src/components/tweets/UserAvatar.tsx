@@ -13,7 +13,7 @@ const UserAvatar: VoidFunctionComponent<UserAvatarProps> = ({ username }) => {
     seed: username,
     dataUri: true,
     backgroundColor:
-      theme.colorScheme == 'dark' ? theme.colors.dark[7] : theme.colors.gray[3],
+      theme.colorScheme == 'dark' ? theme.colors.dark[6] : theme.colors.gray[3],
   });
 
   return <Avatar src={username ? icon : null} radius="xl" alt={username} />;

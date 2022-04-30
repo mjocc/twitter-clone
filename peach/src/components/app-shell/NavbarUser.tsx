@@ -81,7 +81,7 @@ const NavbarUser: VoidFunctionComponent<NavbarUserProps> = () => {
             }}
           >
             {authenticated ? (
-              <User {...user} noLink chevron />
+              <User {...user} chevron />
             ) : (
               <Group>
                 <Skeleton
