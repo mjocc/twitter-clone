@@ -3,7 +3,6 @@ import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomWithHash, selectAtom } from 'jotai/utils';
 import { UserInfo } from './api/auth';
 
-// TODO: (add profile pic url option to database?)
 export const userInfoAtom = atom<null | UserInfo>(null);
 export const authenticatedAtom = selectAtom(
   userInfoAtom,

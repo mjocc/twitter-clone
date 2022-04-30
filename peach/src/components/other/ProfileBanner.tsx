@@ -1,10 +1,11 @@
-import { Avatar, Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { Button, Group, Paper, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useAtomValue } from 'jotai';
 import { useState, VoidFunctionComponent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { followTweeter, Tweeter } from '../../lib/api/tweeters';
 import { useAuthProtected, usernameAtom } from '../../lib/state';
+import UserAvatar from '../tweets/UserAvatar';
 
 interface ProfileBannerProps extends Tweeter {}
 
@@ -41,10 +42,7 @@ const ProfileBanner: VoidFunctionComponent<ProfileBannerProps> = ({
     <Paper py={10} px={20} sx={{ position: 'sticky', top: 60, zIndex: 100 }}>
       <Group position="apart">
         <Group>
-          <Avatar
-            src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-            radius="xl"
-          />
+          <UserAvatar username={username} />
           <Stack>
             <Text size="lg" weight={700} mb={-20}>
               {profile_name}

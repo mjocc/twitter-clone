@@ -1,7 +1,8 @@
-import { Avatar, Box, Group, Text, useMantineTheme } from '@mantine/core';
+import { Box, Group, Text, useMantineTheme } from '@mantine/core';
 import Link from 'next/link';
 import { VoidFunctionComponent } from 'react';
 import { ChevronLeft, ChevronRight } from 'tabler-icons-react';
+import UserAvatar from './UserAvatar';
 
 interface UserProps {
   username?: string;
@@ -20,14 +21,10 @@ const User: VoidFunctionComponent<UserProps> = ({
 
   const component = (
     <Group>
-      {/* // TODO: get actual user image */}
-      <Avatar
-        src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-        radius="xl"
-      />
+      <UserAvatar username={username} />
       <Box sx={{ flex: 1 }}>
         <Text
-          color={theme.colorScheme === 'dark' ? 'white' : 'black'}
+          color={theme.colorScheme === 'dark' ? theme.colors.dark[0] : 'black'}
           size="sm"
           weight={600}
           sx={{ '&:hover': { textDecoration: 'underline' } }}
