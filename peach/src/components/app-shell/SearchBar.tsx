@@ -1,7 +1,7 @@
 import { Autocomplete, Box, Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useRouter } from 'next/router';
-import { useRef, useState, VoidFunctionComponent } from 'react';
+import { useEffect, useRef, useState, VoidFunctionComponent } from 'react';
 import { useQuery } from 'react-query';
 import { Search } from 'tabler-icons-react';
 import { fetchTweeters, Tweeter } from '../../lib/api/tweeters';
@@ -16,12 +16,15 @@ interface TweeterWithValue extends Tweeter {
 const SearchBar: VoidFunctionComponent<SearchBarProps> = () => {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const ref = useRef<HTMLInputElement>(null);
   const [debounced] = useDebouncedValue(query, 100, { leading: true });
+
+  const ref = useRef<HTMLInputElement>(null);
+  const [focused, setFocused] = useState(false);
 
   const { data, isSuccess, isError, isLoading } = useQuery(
     ['tweeters', { query: debounced }],
-    async () => (await fetchTweeters({ search: debounced })).data
+    async () => (await fetchTweeters({ search: debounced })).data,
+    { enabled: focused }
   );
 
   let autocompleteData;
@@ -55,8 +58,10 @@ const SearchBar: VoidFunctionComponent<SearchBarProps> = () => {
         onItemSubmit={({ username }: TweeterWithValue) => {
           router.push(`/@/${username}`);
           setQuery('');
-          ref.current?.blur()
+          ref.current?.blur();
         }}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       />
     </Box>
   );
