@@ -14,7 +14,10 @@ export type TweeterFilters = Partial<{
   username: string;
   following__username: string;
   followed_by__username: string;
+  page: number;
 }>;
+
+export const fetchTweeter = (id: string) => api.get<Tweeter>(`/tweeters/${id}`);
 
 export const fetchTweeters = (filters?: TweeterFilters) =>
   api.get<ApiResponse<Tweeter>>('/tweeters', { params: filters });

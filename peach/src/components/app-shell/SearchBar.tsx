@@ -1,7 +1,7 @@
-import { Autocomplete, Box } from '@mantine/core';
+import { Autocomplete, Box, Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useRouter } from 'next/router';
-import { useState, VoidFunctionComponent } from 'react';
+import { useRef, useState, VoidFunctionComponent } from 'react';
 import { useQuery } from 'react-query';
 import { Search } from 'tabler-icons-react';
 import { fetchTweeters, Tweeter } from '../../lib/api/tweeters';
@@ -16,9 +16,10 @@ interface TweeterWithValue extends Tweeter {
 const SearchBar: VoidFunctionComponent<SearchBarProps> = () => {
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const ref = useRef<HTMLInputElement>(null);
   const [debounced] = useDebouncedValue(query, 100, { leading: true });
 
-  const { data, isSuccess, isError } = useQuery(
+  const { data, isSuccess, isError, isLoading } = useQuery(
     ['tweeters', { query: debounced }],
     async () => (await fetchTweeters({ search: debounced })).data
   );
@@ -34,6 +35,7 @@ const SearchBar: VoidFunctionComponent<SearchBarProps> = () => {
   return (
     <Box sx={{ width: 300 }}>
       <Autocomplete
+        ref={ref}
         value={query}
         onChange={setQuery}
         required
@@ -47,12 +49,14 @@ const SearchBar: VoidFunctionComponent<SearchBarProps> = () => {
           item.value.toLowerCase().includes(value.toLowerCase().trim()) ||
           item.profile_name.toLowerCase().includes(value.toLowerCase().trim())
         }
-        nothingFound="No tweeters found"
+        nothingFound={isLoading ? <Loader size="sm" /> : 'No tweeters found'}
         limit={7}
         error={isError}
-        onItemSubmit={({ username }: TweeterWithValue) =>
-          router.push(`/@/${username}`)
-        }
+        onItemSubmit={({ username }: TweeterWithValue) => {
+          router.push(`/@/${username}`);
+          setQuery('');
+          ref.current?.blur()
+        }}
       />
     </Box>
   );

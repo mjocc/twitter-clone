@@ -1,24 +1,25 @@
-import { Box, Tabs } from '@mantine/core';
-import axios from 'axios';
+import { Alert, Box, Tabs } from '@mantine/core';
 import type {
   GetServerSideProps,
   InferGetServerSidePropsType,
-  NextPage,
+  NextPage
 } from 'next';
 import Head from 'next/head';
-import ProfileBanner from '../../components/other/ProfileBanner';
+import { useQuery } from 'react-query';
+import { AlertCircle } from 'tabler-icons-react';
+import UserBanner from '../../components/tweeter/UserBanner';
 import TweetList from '../../components/tweets/TweetList';
 import { ApiResponse } from '../../lib/api';
 import { getUserInfo } from '../../lib/api/auth';
+import { fetchTweeter, Tweeter } from '../../lib/api/tweeters';
 import { fetchTweets, Tweet } from '../../lib/api/tweets';
-import { Tweeter } from '../../lib/api/tweeters';
 
 export const getServerSideProps: GetServerSideProps<{
-  userInfo: Tweeter;
   initialData: {
     tweets: ApiResponse<Tweet>;
     replies: ApiResponse<Tweet>;
     likes: ApiResponse<Tweet>;
+    userInfo: Tweeter;
   };
 }> = async (context) => {
   const { username } = context.params as { username?: string };
@@ -48,24 +49,49 @@ export const getServerSideProps: GetServerSideProps<{
     }),
   ]);
   const [tweets, replies, likes] = initialResponses.map((res) => res.data);
-  const initialData = { tweets, replies, likes };
+  const initialData = { tweets, replies, likes, userInfo };
   return {
-    props: { userInfo, initialData },
+    props: { initialData },
   };
 };
 
 type ProfileProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
-const Profile: NextPage<ProfileProps> = ({ userInfo, initialData }) => {
-  const username = userInfo.username;
+const Profile: NextPage<ProfileProps> = ({ initialData }) => {
+  const { id, username, profile_name } = initialData.userInfo;
 
+  const {
+    data: tweeter,
+    isSuccess,
+    isError,
+    isLoading
+  } = useQuery(
+    ['tweeters', { id }],
+    async () => (await fetchTweeter(id)).data,
+    {
+      initialData: initialData.userInfo,
+    }
+  );
+  
   return (
     <>
       <Head>
-        <title>{userInfo.profile_name} (@{username}) | Twitter</title>
+        <title>
+          {profile_name} (@{username}) | Twitter
+        </title>
       </Head>
-      <ProfileBanner {...userInfo} />
-      <Box my={5} >
+      {isSuccess && <UserBanner {...tweeter} noLink />}
+      {isError && (
+        <Alert
+          icon={<AlertCircle size={16} />}
+          title="Something went wrong"
+          color="red"
+          mt="md"
+        >
+          Tweeter could not be fetched. Please try again later.
+        </Alert>
+      )}
+      <Box my={5}>
         <Tabs tabPadding="lg">
           <Tabs.Tab label="Tweets">
             <TweetList

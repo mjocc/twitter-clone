@@ -145,7 +145,6 @@ const SignUpForm: VoidFunctionComponent<SignUpFormProps> = () => {
         <Group position="right" mt="md">
           <Button
             type="submit"
-            loaderProps={{ variant: 'oval' }}
             loading={isLoading}
           >
             Sign up

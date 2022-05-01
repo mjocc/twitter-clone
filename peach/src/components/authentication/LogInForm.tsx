@@ -88,7 +88,6 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
         <Group position="right" mt="md">
           <Button
             type="submit"
-            loaderProps={{ variant: 'oval' }}
             loading={isLoading}
           >
             Log in

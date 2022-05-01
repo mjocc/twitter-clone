@@ -15,7 +15,7 @@ import { useMutation } from 'react-query';
 import { UserOff } from 'tabler-icons-react';
 import { logOut } from '../../lib/api/auth';
 import { authenticatedAtom, userInfoAtom } from '../../lib/state';
-import User from '../tweets/User';
+import User from '../tweeter/User';
 
 interface NavbarUserProps {}
 

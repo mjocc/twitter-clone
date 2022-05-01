@@ -99,7 +99,6 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
             )}
             <Button
               type="submit"
-              loaderProps={{ variant: 'oval' }}
               loading={isLoading}
               disabled={!hasContent}
             >

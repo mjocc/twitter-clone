@@ -1,6 +1,6 @@
 import { Box } from '@mantine/core';
 import { forwardRef, VoidFunctionComponent } from 'react';
-import User from '../tweets/User';
+import User from '../tweeter/User';
 
 interface SearchBarItemProps {
   username: string;

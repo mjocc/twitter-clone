@@ -8,18 +8,17 @@ import {
   LoadingOverlay,
   Text,
   Tooltip,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import dateFormat from 'dateformat';
-import { useRouter } from 'next/router';
-import { forwardRef, VoidFunctionComponent } from 'react';
+import { forwardRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Heart } from 'tabler-icons-react';
 import { likeTweet, Tweet as TweetType } from '../../lib/api/tweets';
 import { useAuthProtected } from '../../lib/state';
 import HoverButtonLink from '../other/HoverButtonLink';
-import User from './User';
+import User from '../tweeter/User';
 
 interface TweetProps extends TweetType {
   noLink?: boolean;
@@ -44,7 +43,6 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
     ref
   ) => {
     const authProtected = useAuthProtected();
-    const router = useRouter();
     const { colors } = useMantineTheme();
     const queryClient = useQueryClient();
     const { mutate, isLoading } = useMutation(likeTweet, {
