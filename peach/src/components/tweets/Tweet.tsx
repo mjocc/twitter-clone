@@ -1,16 +1,19 @@
 import {
+  Anchor,
   Box,
   Button,
   Card,
   Center,
   Divider,
-  Group, Text,
+  Group,
+  Text,
   Tooltip,
-  useMantineTheme
+  useMantineTheme,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import dateFormat from 'dateformat';
-import { forwardRef, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Heart } from 'tabler-icons-react';
 import { likeTweet, Tweet as TweetType } from '../../lib/api/tweets';
@@ -22,12 +25,12 @@ interface TweetProps extends TweetType {
   noLink?: boolean;
 }
 
-// TODO: add hashtags (in database) and ability to @
+// TODO: implement /hashtag/[...] page
 
 const Tweet = forwardRef<HTMLDivElement, TweetProps>(
   (
     {
-      text,
+      text: propText,
       author,
       created,
       like_count: propLikeCount,
@@ -76,6 +79,13 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
       },
     });
 
+    //! // TODO: finish this
+    const text = useMemo(() => {
+      const matches = propText.split(/((?<!\w)[#@]\w+)/);
+      console.log(matches);
+      return matches;
+    }, [propText]);
+
     return (
       <Card
         shadow="sm"
@@ -92,8 +102,27 @@ const Tweet = forwardRef<HTMLDivElement, TweetProps>(
           <User {...author} />
         </HoverButtonLink>
         <HoverButtonLink href={`/tweet/${id}`} noLink={noLink}>
-          <Text mt={-5} pb={10} size="xl">
-            {text}
+          <Text mt={-5} pb={10}>
+            {text.map((text) =>
+              /^[#@]/.test(text) ? (
+                <Link
+                  href={
+                    text.startsWith('#')
+                      ? `/hashtag/${text.substring(1)}`
+                      : `/@/${text.substring(1)}`
+                  }
+                  passHref
+                >
+                  <Anchor size="xl" sx={{ display: 'inline' }}>
+                    {text}
+                  </Anchor>
+                </Link>
+              ) : (
+                <Text size="xl" sx={{ display: 'inline' }}>
+                  {text}
+                </Text>
+              )
+            )}
           </Text>
           <Text color="dimmed" size="sm" className="subTest">
             {dateFormat(created, 'h:MM TT · d mmm, yyyy')}

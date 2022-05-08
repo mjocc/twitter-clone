@@ -70,6 +70,17 @@ class Tweet(models.Model):
         return f'"{self.text}" - @{self.author.username}'
 
 
+class Hashtag(models.Model):
+    text = models.CharField(max_length=280, primary_key=True)
+    tweets = models.ManyToManyField("Tweet", related_name="hashtags")
+
+    class Meta:
+        ordering = ["text"]
+
+    def __str__(self):
+        return f"#{self.text}"
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:

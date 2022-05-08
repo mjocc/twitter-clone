@@ -2,7 +2,7 @@ import { Alert, Center, Loader, Stack } from '@mantine/core';
 import { useIntersection } from '@mantine/hooks';
 import { useEffect, VoidFunctionComponent } from 'react';
 import { useInfiniteQuery } from 'react-query';
-import { AlertCircle } from 'tabler-icons-react';
+import { AlertCircle, InfoCircle } from 'tabler-icons-react';
 import { api, ApiResponse } from '../../lib/api';
 import {
   fetchTweets,
@@ -64,22 +64,17 @@ const TweetList: VoidFunctionComponent<TweetListProps> = ({
             Tweets could not be fetched. Please try again later.
           </Alert>
         )}
-        {/* //TODO: add no tweets message if none are found */}
-        {isSuccess && (
-          <>
-            {data.pages.map((page) =>
-              page?.results?.map((tweet, i, tweetPage) => {
-                const last = i + 1 === tweetPage.length;
-                return (
-                  <Tweet
-                    ref={last ? ref : undefined}
-                    key={tweet.id}
-                    {...tweet}
-                  />
-                );
-              })
-            )}
-          </>
+        {isSuccess && data.pages[0].count > 0 ? (
+          data.pages.map((page) =>
+            page?.results?.map((tweet, i, tweetPage) => {
+              const last = i + 1 === tweetPage.length;
+              return (
+                <Tweet ref={last ? ref : undefined} key={tweet.id} {...tweet} />
+              );
+            })
+          )
+        ) : (
+          <Alert icon={<InfoCircle size={16} />}>No tweets found</Alert>
         )}
         {(isFetchingNextPage || isLoading) && (
           <Center>

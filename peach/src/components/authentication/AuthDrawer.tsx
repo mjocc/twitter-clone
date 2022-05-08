@@ -27,6 +27,7 @@ const AuthDrawer: VoidFunctionComponent<AuthDrawerProps> = () => {
     >
       <Tabs
         active={active}
+        variant="pills"
         onTabChange={(_, tabKey: 'log-in' | 'sign-up') => setAuthForm(tabKey)}
         grow
       >

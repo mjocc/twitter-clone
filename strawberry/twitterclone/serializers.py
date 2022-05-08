@@ -1,5 +1,6 @@
+import re
 from rest_framework import serializers
-from .models import Tweet, Tweeter
+from .models import Hashtag, Tweet, Tweeter
 
 
 class TweeterSerializer(serializers.ModelSerializer):
@@ -72,6 +73,13 @@ class TweetSerializer(serializers.ModelSerializer):
         tweet.reply = bool(validated_data["replied_tweet"])
         tweet.author = get_user_or_none(self.context)
         tweet.save()
+
+        hashtag_texts = re.findall("(?<!\w)#\w+", validated_data["text"])
+        stripped_hashtags = [hashtag[1:] for hashtag in hashtag_texts]
+        for hashtag_text in stripped_hashtags:
+            hashtag = Hashtag.objects.get_or_create(text=hashtag_text)[0]
+            hashtag.tweets.add(tweet)
+
         return tweet
 
 

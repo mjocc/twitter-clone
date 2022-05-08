@@ -20,7 +20,7 @@ export type TweetFilters = Partial<{
   author__username: string;
   author__followed_by__username: string;
   liked_by__username: string;
-  reply: string;
+  reply: boolean;
   page: number;
 }>;
 

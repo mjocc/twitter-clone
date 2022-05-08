@@ -10,11 +10,12 @@ import {
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
-import { AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { useState, VoidFunctionComponent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
+import { ApiErrorResponse } from '../../lib/api';
 import { createTweet } from '../../lib/api/tweets';
 
 interface TweetComposerProps {}
@@ -50,14 +51,17 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
         message: 'Tweet created',
       });
     },
-    onError({
-      data,
-    }: AxiosResponse<{
-      text?: string[];
-      non_field_errors?: string[];
-    }>) {
-      if (data?.non_field_errors) setError(data.non_field_errors[0]);
-      form.setErrors(data);
+    onError({ response }: AxiosError<ApiErrorResponse<TweetComposerValues>>) {
+      if (response?.data) {
+        const { data } = response;
+        if (data.non_field_errors) setError(data.non_field_errors[0]);
+
+        const fieldErrorPresent = !!data.text;
+        if (fieldErrorPresent) form.setErrors(data);
+
+        if (!(data.non_field_errors || fieldErrorPresent))
+          setError('Something went wrong. Please try again later.');
+      }
     },
   });
 
@@ -97,11 +101,7 @@ const TweetComposer: VoidFunctionComponent<TweetComposerProps> = () => {
                 ]}
               />
             )}
-            <Button
-              type="submit"
-              loading={isLoading}
-              disabled={!hasContent}
-            >
+            <Button type="submit" loading={isLoading} disabled={!hasContent}>
               Tweet
             </Button>
           </Group>

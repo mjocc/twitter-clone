@@ -2,7 +2,7 @@ import { Alert, Box, Tabs } from '@mantine/core';
 import type {
   GetServerSideProps,
   InferGetServerSidePropsType,
-  NextPage
+  NextPage,
 } from 'next';
 import Head from 'next/head';
 import { useQuery } from 'react-query';
@@ -38,14 +38,13 @@ export const getServerSideProps: GetServerSideProps<{
   const initialResponses = await Promise.all([
     fetchTweets({
       author__username: username,
-      reply: 'false',
+      reply: false,
     }),
     fetchTweets({
       author__username: username,
     }),
     fetchTweets({
       liked_by__username: username,
-      reply: 'false',
     }),
   ]);
   const [tweets, replies, likes] = initialResponses.map((res) => res.data);
@@ -64,7 +63,7 @@ const Profile: NextPage<ProfileProps> = ({ initialData }) => {
     data: tweeter,
     isSuccess,
     isError,
-    isLoading
+    isLoading,
   } = useQuery(
     ['tweeters', { id }],
     async () => (await fetchTweeter(id)).data,
@@ -72,7 +71,7 @@ const Profile: NextPage<ProfileProps> = ({ initialData }) => {
       initialData: initialData.userInfo,
     }
   );
-  
+
   return (
     <>
       <Head>
@@ -97,7 +96,7 @@ const Profile: NextPage<ProfileProps> = ({ initialData }) => {
             <TweetList
               filters={{
                 author__username: username,
-                reply: 'false',
+                reply: false,
               }}
               initialData={initialData.tweets}
             />
@@ -115,7 +114,6 @@ const Profile: NextPage<ProfileProps> = ({ initialData }) => {
             <TweetList
               filters={{
                 liked_by__username: username,
-                reply: 'false',
               }}
               initialData={initialData.likes}
             />
