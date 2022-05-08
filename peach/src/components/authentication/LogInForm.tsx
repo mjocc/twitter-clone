@@ -4,7 +4,7 @@ import {
   Button,
   Group,
   PasswordInput,
-  TextInput
+  TextInput,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
@@ -16,6 +16,7 @@ import { useState, VoidFunctionComponent } from 'react';
 import { useMutation } from 'react-query';
 import { AlertCircle } from 'tabler-icons-react';
 import { z } from 'zod';
+import { ApiErrorResponse } from '../../lib/api';
 import { logIn } from '../../lib/api/auth';
 import { authFormAtom, userInfoAtom } from '../../lib/state';
 
@@ -51,17 +52,16 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
         message: `Now logged in as '${data.username}'`,
       });
     },
-    onError({
-      response,
-    }: AxiosError<{
-      username?: string[];
-      password?: string[];
-      non_field_errors?: string[];
-    }>) {
+    onError({ response }: AxiosError<ApiErrorResponse<LogInFormValues>>) {
       if (response?.data) {
         const { data } = response;
-        if (data?.non_field_errors) setError(data.non_field_errors[0]);
-        if (data?.username || data?.password) form.setErrors(data);
+        if (data.non_field_errors) setError(data.non_field_errors[0]);
+
+        const fieldErrorPresent = !!(data.username || data.password);
+        if (fieldErrorPresent) form.setErrors(data);
+
+        if (!(data.non_field_errors || fieldErrorPresent))
+          setError('Something went wrong. Please try again later.');
       }
     },
   });
@@ -86,10 +86,7 @@ const LogInForm: VoidFunctionComponent<LogInFormProps> = () => {
           </Alert>
         )}
         <Group position="right" mt="md">
-          <Button
-            type="submit"
-            loading={isLoading}
-          >
+          <Button type="submit" loading={isLoading}>
             Log in
           </Button>
         </Group>
